@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'styles.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +11,7 @@ import '../../Components/FadeContainer.dart';
 import 'homeAnimation.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:swipedetector/swipedetector.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -29,38 +31,20 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Animation<EdgeInsets> listSlidePosition;
   Animation<Color> fadeScreenAnimation;
   var animateStatus = 0;
-  List<String> months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
-  String month = new DateFormat.MMMM().format(
-    new DateTime.now(),
-  );
-  int index = new DateTime.now().month;
-  void _selectforward() {
-    if (index < 12)
-      setState(() {
-        ++index;
-        month = months[index - 1];
-      });
+  var menuHeight = 0.0;
+  double mainHeight;
+  bool swipeUp =false;
+  
+  void OpenMenu(Size screenSize)
+  {
+    mainHeight = 0.0;
+    menuHeight = screenSize.longestSide;
   }
 
-  void _selectbackward() {
-    if (index > 1)
-      setState(() {
-        --index;
-        month = months[index - 1];
-      });
+  void ExitMenu(Size screenSize)
+  {
+    menuHeight = 0.0;
+    mainHeight = screenSize.longestSide;
   }
 
   @override
@@ -169,6 +153,21 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     } on TickerCanceled {}
   }
 
+  void setHeightMain(BuildContext context)
+  {
+    Size screenSize = MediaQuery.of(context).size;
+    setState(() {
+      mainHeight = screenSize.height;
+    });
+    
+  }
+
+  void _vertDragEnd()
+  {
+    Size screenSize =MediaQuery.of(context).size;
+    OpenMenu(screenSize);
+  }
+
   @override
   Widget build(BuildContext context) {
     timeDilation = 0.3;
@@ -178,58 +177,59 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       onWillPop: () async {
         return true;
       },
-      child: new Scaffold(
-        body: new Container(
-          width: screenSize.width,
-          height: screenSize.height,
-          child: new Stack(
-            //alignment: buttonSwingAnimation.value,
-            alignment: Alignment.bottomRight,
+      child: new Scaffold(        
+        body: Center(
+          child:Column(
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              new ListView(
-                shrinkWrap: _screenController.value < 1 ? false : true,
-                padding: const EdgeInsets.all(0.0),
-                children: <Widget>[
-                  new ImageBackground(
-                    backgroundImage: backgroundImage,
-                    containerGrowAnimation: containerGrowAnimation,
-                    profileImage: profileImage,
-                    month: month,
-                    selectbackward: _selectbackward,
-                    selectforward: _selectforward,
+              AnimatedContainer(
+                duration: Duration(seconds: 10),
+                height: menuHeight,
+                child: ListView(
+                  children: <Widget>[
+                    RaisedButton(
+                    onPressed: (){
+                      setState(() {
+                        ExitMenu(screenSize);
+                      });
+                    },
+                    child: const Text("Salir"),
+                    ),
+                    RaisedButton(
+                    onPressed: (){},
+                    child: const Text("xD"),
+                    ),
+                  ],
+                ),
+              ),
+              SwipeDetector(
+                onSwipeUp: _vertDragEnd,
+                child:AnimatedContainer(
+                duration: Duration(seconds: 10),
+                color: Color.fromARGB(255, 1, 1, 255),
+                height: mainHeight,
+                width: screenSize.width,
+                child: Column(
+                  children: <Widget>[
+                    RaisedButton(
+                      onPressed: (){},
+                      child: const Text("Productos"),
+                    ),
+                    RaisedButton(
+                      onPressed: (){
+                      setState(() {
+                        OpenMenu(screenSize);
+                      });
+                      },
+                      child: const Text("Pedidos"),
+                      ),
+                    ]
                   ),
-                  //new Calender(),
-                  new ListViewContent(
-                    listSlideAnimation: listSlideAnimation,
-                    listSlidePosition: listSlidePosition,
-                    listTileWidth: listTileWidth,
-                  )
-                ],
-              ),
-              new FadeBox(
-                fadeScreenAnimation: fadeScreenAnimation,
-                containerGrowAnimation: containerGrowAnimation,
-              ),
-              animateStatus == 0
-                  ? new Padding(
-                      padding: new EdgeInsets.all(20.0),
-                      child: new InkWell(
-                          splashColor: Colors.white,
-                          highlightColor: Colors.white,
-                          onTap: () {
-                            setState(() {
-                              animateStatus = 1;
-                            });
-                            _playAnimation();
-                          },
-                          child: new AddButton(
-                            buttonGrowAnimation: buttonGrowAnimation,
-                          )))
-                  : new StaggerAnimation(
-                      buttonController: _buttonController.view),
-            ],
-          ),
+              )
+            )
+          ]
         ),
+      ),
       ),
     ));
   }

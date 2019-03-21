@@ -91,7 +91,7 @@ class LoginScreenState extends State<LoginScreen>
                         alignment: AlignmentDirectional.bottomCenter,
                         children: <Widget>[
                           new Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               new Tick(image: tick),
                               new FormContainer(),
@@ -100,7 +100,7 @@ class LoginScreenState extends State<LoginScreen>
                           ),
                           animationStatus == 0
                               ? new Padding(
-                                  padding: const EdgeInsets.only(bottom: 50.0),
+                                  padding: const EdgeInsets.only(bottom: 30.0),
                                   child: new InkWell(
                                       onTap: () {
                                         setState(() {

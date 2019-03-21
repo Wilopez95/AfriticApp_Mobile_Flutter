@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:dribbbledanimation/Screens/Login/index.dart';
-import 'package:dribbbledanimation/Screens/Home/index.dart';
+
+import 'package:afriticapp/Screens/Login/index.dart';
+import 'package:afriticapp/Screens/Home/index.dart';
 
 class Routes {
   Routes() {
     runApp(new MaterialApp(
-      title: "Dribbble Animation App",
+      title: "AfriticApp",
       debugShowCheckedModeBanner: false,
       home: new LoginScreen(),
       onGenerateRoute: (RouteSettings settings) {
@@ -36,5 +37,5 @@ class MyCustomRoute<T> extends MaterialPageRoute<T> {
       Animation<double> secondaryAnimation, Widget child) {
     if (settings.isInitialRoute) return child;
     return new FadeTransition(opacity: animation, child: child);
-  }
+      }
 }
