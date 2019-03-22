@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/animation.dart';
 import 'dart:async';
 import '../../Components/GenericButton.dart';
-import '../../Components/AddButton.dart';
+import '../../Components/PrototipoListaProductos.dart';
 import '../../Components/HomeTopView.dart';
 import '../../Components/FadeContainer.dart';
 import 'homeAnimation.dart';
@@ -165,6 +165,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             });
             },
             child: const Text("Pedidos"),
+            ),
+            new PrototipoListaProductos(
+              text:"Textos"
             ),
         ]
       ),
