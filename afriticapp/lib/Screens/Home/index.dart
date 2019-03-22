@@ -4,7 +4,7 @@ import 'styles.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/animation.dart';
 import 'dart:async';
-import '../../Components/ListViewContainer.dart';
+import '../../Components/GenericButton.dart';
 import '../../Components/AddButton.dart';
 import '../../Components/HomeTopView.dart';
 import '../../Components/FadeContainer.dart';
@@ -31,21 +31,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Animation<EdgeInsets> listSlidePosition;
   Animation<Color> fadeScreenAnimation;
   var animateStatus = 0;
-  var menuHeight = 0.0;
-  double mainHeight;
-  bool swipeUp =false;
-  
-  void OpenMenu(Size screenSize)
-  {
-    mainHeight = 0.0;
-    menuHeight = screenSize.longestSide;
-  }
 
-  void ExitMenu(Size screenSize)
-  {
-    menuHeight = 0.0;
-    mainHeight = screenSize.longestSide;
-  }
+
 
   @override
   void initState() {
@@ -153,25 +140,57 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     } on TickerCanceled {}
   }
 
-  void setHeightMain(BuildContext context)
-  {
-    Size screenSize = MediaQuery.of(context).size;
-    setState(() {
-      mainHeight = screenSize.height;
-    });
-    
-  }
-
-  void _vertDragEnd()
-  {
-    Size screenSize =MediaQuery.of(context).size;
-    OpenMenu(screenSize);
-  }
-
   @override
   Widget build(BuildContext context) {
     timeDilation = 0.3;
     Size screenSize = MediaQuery.of(context).size;
+
+    final _controller = new PageController();
+
+    List<Widget> _pages = <Widget>[
+      AnimatedContainer(
+      duration: Duration(seconds: 10),
+      color: Color.fromARGB(255, 1, 1, 255),
+      height: screenSize.height,
+      width: screenSize.width,
+      child: Column(
+        children: <Widget>[
+          GenericButton(
+            title: "Productos",
+          ),
+          RaisedButton(
+            onPressed: (){
+            setState(() {
+              _controller.jumpToPage(0);
+            });
+            },
+            child: const Text("Pedidos"),
+            ),
+        ]
+      ),
+      ),
+      AnimatedContainer(
+        duration: Duration(seconds: 10),
+        height: screenSize.height,
+        width: screenSize.width,
+        child: Column(
+          children: <Widget>[
+            RaisedButton(
+            onPressed: (){
+              setState(() {
+                _controller.jumpToPage(1);
+              });
+            },
+            child: const Text("Salir"),
+            ),
+            RaisedButton(
+            onPressed: (){},
+            child: const Text("xD"),
+            ),
+          ],
+        ),
+      )
+    ];
 
     return (new WillPopScope(
       onWillPop: () async {
@@ -179,57 +198,15 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       },
       child: new Scaffold(        
         body: Center(
-          child:Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              AnimatedContainer(
-                duration: Duration(seconds: 10),
-                height: menuHeight,
-                child: ListView(
-                  children: <Widget>[
-                    RaisedButton(
-                    onPressed: (){
-                      setState(() {
-                        ExitMenu(screenSize);
-                      });
-                    },
-                    child: const Text("Salir"),
-                    ),
-                    RaisedButton(
-                    onPressed: (){},
-                    child: const Text("xD"),
-                    ),
-                  ],
+          child:PageView.builder(
+            controller: _controller,
+            scrollDirection: Axis.vertical,
+            itemCount: 2,
+            itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },
                 ),
-              ),
-              SwipeDetector(
-                onSwipeUp: _vertDragEnd,
-                child:AnimatedContainer(
-                duration: Duration(seconds: 10),
-                color: Color.fromARGB(255, 1, 1, 255),
-                height: mainHeight,
-                width: screenSize.width,
-                child: Column(
-                  children: <Widget>[
-                    RaisedButton(
-                      onPressed: (){},
-                      child: const Text("Productos"),
-                    ),
-                    RaisedButton(
-                      onPressed: (){
-                      setState(() {
-                        OpenMenu(screenSize);
-                      });
-                      },
-                      child: const Text("Pedidos"),
-                      ),
-                    ]
-                  ),
               )
-            )
-          ]
-        ),
-      ),
       ),
     ));
   }
