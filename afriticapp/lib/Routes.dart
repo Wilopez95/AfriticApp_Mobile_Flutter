@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:afriticapp/Screens/Login/index.dart';
 import 'package:afriticapp/Screens/Home/index.dart';
+import 'package:afriticapp/Screens/Productos/index.dart';
+import 'package:afriticapp/Screens/Pedidos/index.dart';
 
 class Routes {
   Routes() {
@@ -20,6 +22,16 @@ class Routes {
           case '/home':
             return new MyCustomRoute(
               builder: (_) => new HomeScreen(),
+              settings: settings,
+            );
+          case '/productos':
+            return new MyCustomRoute(
+              builder: (_) => new Productos(),
+              settings: settings,
+            );
+          case '/pedidos':
+            return new MyCustomRoute(
+              builder: (_) => new Productos(),
               settings: settings,
             );
         }

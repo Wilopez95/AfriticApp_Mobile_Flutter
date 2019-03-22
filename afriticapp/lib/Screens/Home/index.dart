@@ -31,6 +31,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Animation<EdgeInsets> listSlidePosition;
   Animation<Color> fadeScreenAnimation;
   var animateStatus = 0;
+  String textoPrueba = "Prueba";
 
 
 
@@ -155,16 +156,35 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       width: screenSize.width,
       child: Column(
         children: <Widget>[
-          GenericButton(
-            title: "Productos",
+          Text(
+            textoPrueba
           ),
+          GestureDetector(
+              child: 
+              GenericButton(
+                title: "Productos",
+              ),
+              onTap: (){
+                Navigator.pushNamed(context, "/productos");
+              } ,
+          ),
+          GestureDetector(
+            child: 
+            GenericButton(
+              title: "Pedidos",
+            ),
+            onTap: (){
+              Navigator.pushNamed(context, "/pedidos");
+            },
+          ),
+          
           RaisedButton(
             onPressed: (){
             setState(() {
               _controller.jumpToPage(0);
             });
             },
-            child: const Text("Pedidos"),
+            child: const Text("Menu"),
             ),
             new PrototipoListaProductos(
               text:"Textos"
