@@ -69,6 +69,9 @@ class LoginScreenState extends State<LoginScreen>
     return (new WillPopScope(
         onWillPop: _onWillPop,
         child: new Scaffold(
+          appBar: AppBar(
+            title: Text("AfriticApp"),
+          ),
           body: new Container(
               decoration: new BoxDecoration(
                 image: backgroundImage,

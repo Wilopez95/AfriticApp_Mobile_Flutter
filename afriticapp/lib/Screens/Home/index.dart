@@ -6,7 +6,7 @@ import 'package:flutter/animation.dart';
 import 'dart:async';
 import '../../Components/GenericButton.dart';
 import '../../Components/PrototipoListaProductos.dart';
-import '../../Components/HomeTopView.dart';
+import '../../Components/MenuRoundButton.dart';
 import '../../Components/FadeContainer.dart';
 import 'homeAnimation.dart';
 import 'package:intl/intl.dart';
@@ -148,18 +148,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     final _controller = new PageController();
 
-    List<Widget> _pages = <Widget>[
-      AnimatedContainer(
-      duration: Duration(seconds: 10),
-      color: Color.fromARGB(255, 1, 1, 255),
-      height: screenSize.height,
-      width: screenSize.width,
-      child: Column(
-        children: <Widget>[
-          Text(
-            textoPrueba
-          ),
-          GestureDetector(
+    MenuRoundButton menuButton = new MenuRoundButton(buttonGrowAnimation: buttonGrowAnimation,);
+
+    GestureDetector bProd = new GestureDetector(
               child: 
               GenericButton(
                 title: "Productos",
@@ -167,8 +158,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               onTap: (){
                 Navigator.pushNamed(context, "/productos");
               } ,
-          ),
-          GestureDetector(
+          );
+
+    GestureDetector bPedidos = new GestureDetector(
             child: 
             GenericButton(
               title: "Pedidos",
@@ -176,23 +168,46 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             onTap: (){
               Navigator.pushNamed(context, "/pedidos");
             },
-          ),
-          
-          RaisedButton(
+          );
+
+    RaisedButton bMenu = new RaisedButton(
             onPressed: (){
             setState(() {
               _controller.jumpToPage(0);
             });
             },
             child: const Text("Menu"),
-            ),
-            new PrototipoListaProductos(
-              text:"Textos"
-            ),
+            );
+
+    AnimatedContainer mainPage = new AnimatedContainer(
+      duration: Duration(seconds: 10),
+      color: Color.fromARGB(255, 1, 1, 255),
+      height: screenSize.height,
+      width: screenSize.width,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            child:bProd ,
+            padding: EdgeInsets.all(15),
+          ),
+
+          Padding(
+            child: bPedidos,
+            padding: EdgeInsets.all(15),
+          ),
+          new PrototipoListaProductos(
+            text:"Textos"
+          ),
+          Container(
+            alignment: AlignmentDirectional.bottomEnd,
+            child: menuButton,
+            padding: EdgeInsets.all(15),
+          ),
         ]
-      ),
-      ),
-      AnimatedContainer(
+      )
+    );
+
+    AnimatedContainer menuPage = AnimatedContainer(
         duration: Duration(seconds: 10),
         height: screenSize.height,
         width: screenSize.width,
@@ -212,14 +227,23 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
           ],
         ),
-      )
+      );
+
+    
+
+    List<Widget> _pages = <Widget>[
+      mainPage,
+      menuPage,
     ];
 
     return (new WillPopScope(
       onWillPop: () async {
         return true;
       },
-      child: new Scaffold(        
+      child: new Scaffold(
+        appBar: AppBar(
+          title: Text("AfriticApp"),
+        ),        
         body: Center(
           child:PageView.builder(
             controller: _controller,
