@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-#Fri Mar 22 11:11:53 CST 2019
-base.0=C\:\\Users\\piang\\Documents\\GitHub\\AfriticApp\\afriticapp\\build\\app\\intermediates\\transforms\\dexMerger\\debug\\0
-=======
-#Fri Mar 22 12:44:53 CST 2019
+#Fri Mar 22 16:28:55 CST 2019
 base.0=/home/ekkran/Documents/AP/AfriticApp/afriticapp/build/app/intermediates/transforms/dexMerger/debug/0
->>>>>>> a45f5202e317db1d50db140bd44264cc1d8ff2f0
 path.0=classes.dex
 renamed.0=classes.dex
