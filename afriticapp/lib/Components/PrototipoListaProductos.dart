@@ -7,27 +7,27 @@ class PrototipoListaProductos extends StatelessWidget {
   Widget build(BuildContext context) {
     return (new Container(
       child: new Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          new Padding(
-            padding: EdgeInsets.all(10),
-            child: new Text(
-            "Imagen.jpg",
-            style: new TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
-                fontWeight: FontWeight.w300,
-                letterSpacing: 0.3,
-              ),
-            ),
+          new Container(
+            padding: EdgeInsets.only(left: 10,right: 10),
+            decoration: new BoxDecoration(
+              image: new DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage(
+                "assets/avatars/avatar-3.jpg",
+                )
+              ), 
+            ) 
           ),
           new Padding(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.only(left: 10,right: 10),
             child: new Column(
             children: <Widget>[
                 new Text(
                 text,
                 style: new TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 20.0,
                     fontWeight: FontWeight.w300,
                     letterSpacing: 0.3,
@@ -36,7 +36,7 @@ class PrototipoListaProductos extends StatelessWidget {
                 new Text(
                 text,
                 style: new TextStyle(
-                    color: Colors.white,
+                    color: Colors.black45,
                     fontSize: 20.0,
                     fontWeight: FontWeight.w300,
                     letterSpacing: 0.3,
@@ -45,12 +45,12 @@ class PrototipoListaProductos extends StatelessWidget {
               ],
             ),
           ),
-          new RaisedButton(
-            child: new Text("Botón-1"),
+          new IconButton(
+            icon: Icon(Icons.edit),
             onPressed: null,
           ),
-          new RaisedButton(
-            child: new Text("Botón-2"),
+          new IconButton(
+            icon: Icon(Icons.delete),
             onPressed: null,
           ),
         ],

@@ -148,7 +148,13 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     final _controller = new PageController();
 
-    MenuRoundButton menuButton = new MenuRoundButton(buttonGrowAnimation: buttonGrowAnimation,);
+    GestureDetector bMenu = new GestureDetector(
+      child: MenuRoundButton(buttonGrowAnimation: buttonGrowAnimation),
+      onTap: () {setState(() {
+              _controller.jumpToPage(1);
+            });
+            },
+    );
 
     GestureDetector bProd = new GestureDetector(
               child: 
@@ -170,38 +176,44 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             },
           );
 
-    RaisedButton bMenu = new RaisedButton(
-            onPressed: (){
-            setState(() {
-              _controller.jumpToPage(0);
-            });
-            },
-            child: const Text("Menu"),
-            );
-
     AnimatedContainer mainPage = new AnimatedContainer(
       duration: Duration(seconds: 10),
       color: Color.fromARGB(255, 1, 1, 255),
       height: screenSize.height,
       width: screenSize.width,
-      child: Column(
+      child: Stack(
         children: <Widget>[
-          Padding(
-            child:bProd ,
-            padding: EdgeInsets.all(15),
-          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                child:bProd ,
+                padding: EdgeInsets.all(15),
+              ),
 
-          Padding(
-            child: bPedidos,
-            padding: EdgeInsets.all(15),
+              Padding(
+                child: bPedidos,
+                padding: EdgeInsets.all(15),
+              ),
+            ],
+
           ),
-          new PrototipoListaProductos(
+          /* new PrototipoListaProductos(
             text:"Textos"
-          ),
-          Container(
-            alignment: AlignmentDirectional.bottomEnd,
-            child: menuButton,
-            padding: EdgeInsets.all(15),
+          ), */
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children:<Widget>[
+              Container(
+                alignment: AlignmentDirectional.bottomEnd,
+                padding: EdgeInsets.all(15),
+                child: bMenu,
+              )
+            ] ,
           ),
         ]
       )
@@ -216,7 +228,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             RaisedButton(
             onPressed: (){
               setState(() {
-                _controller.jumpToPage(1);
+                _controller.jumpToPage(0);
               });
             },
             child: const Text("Salir"),

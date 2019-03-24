@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../Components/PrototipoListaProductos.dart';
+
 
 class Pedidos extends StatefulWidget
 {
@@ -16,16 +18,42 @@ class PedidosState extends State<Pedidos> {
   {
     Size screenSize = MediaQuery.of(context).size;
 
-    return new Scaffold(
-      body: Column(
-        children: <Widget>[
-          new Container(
-            height: screenSize.height,
-            width: screenSize.width,
-            color: Color.fromARGB(255, 255, 0, 0),
-          )
-        ],
+    AppBar appBar = new AppBar(
+      title: Text("AfriticaApp"),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () {
+
+          },
+          icon: new Icon(Icons.search),
+          alignment: AlignmentDirectional.centerEnd,
+        ),
+        IconButton(
+          onPressed: (){
+
+          },
+          icon: Icon(Icons.menu),
+        )
+      ],
+    );
+
+    List<PrototipoListaProductos> _items = <PrototipoListaProductos>[
+      PrototipoListaProductos(
+        text: "Elemento1",
       ),
+      PrototipoListaProductos(
+        text: "Elemento2",
+      )
+    ];
+
+    return new Scaffold(
+      appBar: appBar,
+      body: ListView.builder(
+        itemCount: _items.length,
+        itemBuilder: (BuildContext context,int index){
+          return _items[index%_items.length];
+        },
+      )
     );
   }
   

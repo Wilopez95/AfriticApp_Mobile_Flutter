@@ -31,7 +31,7 @@ class Routes {
             );
           case '/pedidos':
             return new MyCustomRoute(
-              builder: (_) => new Productos(),
+              builder: (_) => new Pedidos(),
               settings: settings,
             );
         }
