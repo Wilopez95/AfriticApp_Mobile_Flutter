@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
 class PrototipoListaProductos extends StatelessWidget {
-  PrototipoListaProductos({this.text});
+  PrototipoListaProductos({this.text, this.image});
   final String text;
+  final DecorationImage image;
   @override
   Widget build(BuildContext context) {
     return (new Container(
+      height: (MediaQuery.of(context).size.height/10),
+      width: (MediaQuery.of(context).size.height/10),
+      padding: EdgeInsets.all(5),
       child: new Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           new Container(
-            padding: EdgeInsets.only(left: 10,right: 10),
+            width: MediaQuery.of(context).size.height/10,
             decoration: new BoxDecoration(
-              image: new DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(
-                "assets/avatars/avatar-3.jpg",
-                )
-              ), 
+              shape: BoxShape.circle,
+              image: image,
             ) 
           ),
           new Padding(

@@ -18,6 +18,13 @@ class PedidosState extends State<Pedidos> {
   {
     Size screenSize = MediaQuery.of(context).size;
 
+    DecorationImage image = new DecorationImage(
+            fit: BoxFit.cover,
+            image: AssetImage(
+            "assets/avatars/avatar-3.jpg",
+            )
+          );
+
     AppBar appBar = new AppBar(
       title: Text("AfriticaApp"),
       actions: <Widget>[
@@ -40,15 +47,20 @@ class PedidosState extends State<Pedidos> {
     List<PrototipoListaProductos> _items = <PrototipoListaProductos>[
       PrototipoListaProductos(
         text: "Elemento1",
+        image: image,
       ),
       PrototipoListaProductos(
         text: "Elemento2",
+        image: image,
       )
     ];
+
+
 
     return new Scaffold(
       appBar: appBar,
       body: ListView.builder(
+        padding: EdgeInsets.all(5),
         itemCount: _items.length,
         itemBuilder: (BuildContext context,int index){
           return _items[index%_items.length];
