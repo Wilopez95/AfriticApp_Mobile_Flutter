@@ -176,6 +176,17 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             },
           );
 
+    GestureDetector bSalir = new GestureDetector(
+      child: GenericButton(
+        title: "Salir",
+      ),
+      onTap: () {
+        setState(() {
+          _controller.jumpToPage(0);
+        });
+      },
+    );
+
     AnimatedContainer mainPage = new AnimatedContainer(
       duration: Duration(seconds: 10),
       color: Color.fromARGB(255, 1, 1, 255),
@@ -200,9 +211,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ],
 
           ),
-          /* new PrototipoListaProductos(
-            text:"Textos"
-          ), */
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
@@ -225,18 +233,10 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         width: screenSize.width,
         child: Column(
           children: <Widget>[
-            RaisedButton(
-            onPressed: (){
-              setState(() {
-                _controller.jumpToPage(0);
-              });
-            },
-            child: const Text("Salir"),
-            ),
-            RaisedButton(
-            onPressed: (){},
-            child: const Text("xD"),
-            ),
+            Padding(
+              padding: EdgeInsets.all(15),
+              child: bSalir,
+            )
           ],
         ),
       );

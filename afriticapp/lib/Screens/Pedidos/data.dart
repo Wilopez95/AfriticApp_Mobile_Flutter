@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class RowPedido
 {
   String text;
-  DecorationImage image;
-  RowPedido(this.text,this.image);
+  RowPedido(this.text);
 }
 
 class RowPedidoBuilder
@@ -16,10 +15,8 @@ class RowPedidoBuilder
     for (var i = 0; i < 3; i++) {
       listaPedidos.add(
         new RowPedido(
-          "lala",
-          DecorationImage(
-            image: AssetImage("assets/avatars/avatar-"+(i+1).toString()+".jpg")
-          ))
+          "lala"
+        )
       );
     }
   }

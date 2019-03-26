@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../Components/PrototipoListaProductos.dart';
+import '../../Components/PrototipoListaPedidos.dart';
 import 'package:afriticapp/Screens/Pedidos/data.dart';
 
 
@@ -19,12 +19,7 @@ class PedidosState extends State<Pedidos> {
   {
     Size screenSize = MediaQuery.of(context).size;
 
-    DecorationImage image = new DecorationImage(
-            fit: BoxFit.cover,
-            image: AssetImage(
-            "assets/avatars/avatar-3.jpg",
-            )
-          );
+
 
     AppBar appBar = new AppBar(
       title: Text("AfriticaApp"),
@@ -47,8 +42,8 @@ class PedidosState extends State<Pedidos> {
 
     RowPedidoBuilder pedidos =new RowPedidoBuilder();
 
-    List<PrototipoListaProductos> _items = pedidos.listaPedidos.map(
-      (pedido) => (PrototipoListaProductos(text: pedido.text,image: pedido.image,))
+    List<PrototipoListaPedidos> _items = pedidos.listaPedidos.map(
+      (pedido) => (PrototipoListaPedidos(text: pedido.text))
     ).toList();
 
 

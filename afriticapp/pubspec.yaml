@@ -25,6 +25,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   intl: ^0.15.7
   swipedetector: ^1.2.0
+  draggable_floating_button: ^0.0.2
 
 dev_dependencies:
   flutter_test:
