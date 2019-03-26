@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../Components/PrototipoListaProductos.dart';
+import 'package:afriticapp/Screens/Pedidos/data.dart';
 
 
 class Pedidos extends StatefulWidget
@@ -44,16 +45,11 @@ class PedidosState extends State<Pedidos> {
       ],
     );
 
-    List<PrototipoListaProductos> _items = <PrototipoListaProductos>[
-      PrototipoListaProductos(
-        text: "Elemento1",
-        image: image,
-      ),
-      PrototipoListaProductos(
-        text: "Elemento2",
-        image: image,
-      )
-    ];
+    RowPedidoBuilder pedidos =new RowPedidoBuilder();
+
+    List<PrototipoListaProductos> _items = pedidos.listaPedidos.map(
+      (pedido) => (PrototipoListaProductos(text: pedido.text,image: pedido.image,))
+    ).toList();
 
 
 
