@@ -1,11 +1,19 @@
 {
     "logs": [
         {
-            "outputFile": "/home/ekkran/Documents/AP/AfriticApp/afriticapp/build/app/intermediates/res/merged/debug/values_values.arsc.flat",
+            "outputFile": "D:\\Documentos\\AfriticApp\\afriticapp\\build\\app\\intermediates\\res\\merged\\debug\\values_values.arsc.flat",
             "map": [
                 {
-                    "source": "/home/ekkran/Documents/AP/AfriticApp/afriticapp/android/app/src/main/res/values/styles.xml",
+                    "source": "D:\\Documentos\\AfriticApp\\afriticapp\\android\\app\\src\\main\\res\\values\\styles.xml",
                     "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "57",
+                        "endLines": "6",
+                        "endColumns": "12",
+                        "endOffsets": "353"
+                    },
+                    "to": {
                         "startLines": "2",
                         "startColumns": "4",
                         "startOffsets": "55",

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'styles.dart';
 import 'loginAnimation.dart';
@@ -45,7 +47,7 @@ class LoginScreenState extends State<LoginScreen>
     return showDialog(
           context: context,
           child: new AlertDialog(
-            title: new Text('Are you sure?'),
+            title: new Text('¿Esta seguro?'),
             actions: <Widget>[
               new FlatButton(
                 onPressed: () => Navigator.of(context).pop(false),
@@ -53,8 +55,8 @@ class LoginScreenState extends State<LoginScreen>
               ),
               new FlatButton(
                 onPressed: () =>
-                    Navigator.pushReplacementNamed(context, "/home"),
-                child: new Text('Yes'),
+                    exit(0),
+                child: new Text('Si'),
               ),
             ],
           ),
@@ -66,16 +68,14 @@ class LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     timeDilation = 0.4;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
     return (new WillPopScope(
         onWillPop: _onWillPop,
         child: new Scaffold(
-          appBar: AppBar(
-            title: Text("AfriticApp"),
-          ),
           body: new Container(
-              decoration: new BoxDecoration(
-                image: backgroundImage,
-              ),
               child: new Container(
                   decoration: new BoxDecoration(
                       gradient: new LinearGradient(
@@ -96,7 +96,12 @@ class LoginScreenState extends State<LoginScreen>
                           new Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
-                              new Tick(image: tick),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  top: MediaQuery.of(context).size.height/10,
+                                ),
+                                child: new Tick(image: tick),
+                              ),              
                               new FormContainer(),
                               new SignUp()
                             ],

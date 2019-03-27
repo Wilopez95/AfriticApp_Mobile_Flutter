@@ -14,12 +14,12 @@ class FormContainer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               new InputFieldArea(
-                hint: "Username",
+                hint: "Correo",
                 obscure: false,
                 icon: Icons.person_outline,
               ),
               new InputFieldArea(
-                hint: "Password",
+                hint: "Contraseña",
                 obscure: true,
                 icon: Icons.lock_outline,
               ),

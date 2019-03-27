@@ -10,7 +10,7 @@ class SignUp extends StatelessWidget {
       ),
       onPressed: null,
       child: new Text(
-        "Don't have an account? Sign Up",
+        "Recuperar contraseña",
         textAlign: TextAlign.center,
         overflow: TextOverflow.ellipsis,
         softWrap: true,
