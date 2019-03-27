@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 DecorationImage backgroundImage = new DecorationImage(
-  image: new ExactAssetImage('assets/home.jpeg'),
+  image: new ExactAssetImage('assets/name.png'),
   fit: BoxFit.cover,
 );
 

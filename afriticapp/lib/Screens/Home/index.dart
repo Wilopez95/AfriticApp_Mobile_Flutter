@@ -32,6 +32,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Animation<Color> fadeScreenAnimation;
   var animateStatus = 0;
   String textoPrueba = "Prueba";
+  bool flagadmin = true;
 
 
 
@@ -176,7 +177,41 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             },
           );
 
-    GestureDetector bSalir = new GestureDetector(
+    
+    GestureDetector bCambiarContrasena = new GestureDetector(
+      child: GenericButton(
+        title: "Cambiar contraseña",
+      ),
+      onTap: () {
+        setState(() {
+          _controller.jumpToPage(0);
+        });
+      },
+    );
+
+    GestureDetector bEstadisticas = new GestureDetector(
+      child: GenericButton(
+        title: "Estadistica",
+      ),
+      onTap: () {
+        setState(() {
+          _controller.jumpToPage(0);
+        });
+      },
+    );
+
+    GestureDetector bAdmisnitrar = new GestureDetector(
+      child: GenericButton(
+        title: "Administrar",
+      ),
+      onTap: () {
+        setState(() {
+          _controller.jumpToPage(0);
+        });
+      },
+    );
+
+      GestureDetector bSalir = new GestureDetector(
       child: GenericButton(
         title: "Salir",
       ),
@@ -186,6 +221,41 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         });
       },
     );
+
+    List<Widget> botonesmenuadm = <Widget>[
+              Padding(
+                child:bCambiarContrasena ,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: bEstadisticas,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: bAdmisnitrar,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: bSalir,
+                padding: EdgeInsets.all(15),
+              ),
+            ];
+
+        List<Widget> botonesmenu = <Widget>[
+              Padding(
+                child:bCambiarContrasena ,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: bEstadisticas,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: bSalir,
+                padding: EdgeInsets.all(15),
+              ),
+            ];
+
 
     AnimatedContainer mainPage = new AnimatedContainer(
       duration: Duration(seconds: 10),
@@ -223,6 +293,17 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image(
+                image: AssetImage("assets/name.png"),
+              )
+            ],
+
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
             children:<Widget>[
               Container(
@@ -242,10 +323,12 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         width: screenSize.width,
         child: Column(
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(15),
-              child: bSalir,
-            )
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: flagadmin? botonesmenuadm:botonesmenu
+            ),
           ],
         ),
       );
@@ -263,7 +346,12 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       },
       child: new Scaffold(
         appBar: AppBar(
-          title: Text("AfriticApp"),
+          title: Text("Inicio"),
+          centerTitle: true,
+          backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+          leading: new Container(),
+          
+
         ),        
         body: Center(
           child:PageView.builder(

@@ -35,6 +35,7 @@ class LoginScreenState extends State<LoginScreen>
     _loginButtonController.dispose();
     super.dispose();
   }
+  
 
   Future<Null> _playAnimation() async {
     try {
@@ -62,6 +63,37 @@ class LoginScreenState extends State<LoginScreen>
           ),
         ) ??
         false;
+  }
+
+
+   Future<bool> _forgotPass() {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Recuperar Contraseña'),
+            content: TextField(
+              decoration: InputDecoration(hintText: "Correo"),
+              cursorColor: Color.fromRGBO(247, 64, 106, 1.0),
+            ),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text('Enviar'),
+                textColor:  Color.fromRGBO(247, 64, 106, 1.0),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              new FlatButton(
+                child: new Text('Cancelar'),
+                textColor:  Color.fromRGBO(247, 64, 106, 1.0),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 
   @override
@@ -103,7 +135,9 @@ class LoginScreenState extends State<LoginScreen>
                                 child: new Tick(image: tick),
                               ),              
                               new FormContainer(),
-                              new SignUp()
+                              new SignUp(
+                                funcion: _forgotPass,
+                              )
                             ],
                           ),
                           animationStatus == 0

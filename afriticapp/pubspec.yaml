@@ -47,7 +47,7 @@ flutter:
   assets:
    
   - assets/login.png
-  - assets/home.jpeg
+  - assets/name.png
   - assets/tick.png
   - assets/avatars/avatar-1.jpg
   - assets/avatars/avatar-2.jpg

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 class SignUp extends StatelessWidget {
-  SignUp();
+  SignUp({this.funcion});
+  final VoidCallback funcion;
   @override
   Widget build(BuildContext context) {
     return (new FlatButton(
       padding: const EdgeInsets.only(
         top: 160.0,
       ),
-      onPressed: null,
+      onPressed: funcion,
       child: new Text(
         "Recuperar contraseña",
         textAlign: TextAlign.center,
