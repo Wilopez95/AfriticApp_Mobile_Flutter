@@ -21,6 +21,7 @@ class ProductosState extends State<Productos> {
   {
     AppBar appBar = new AppBar(
       title: Text("AfriticaApp"),
+      backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
       actions: <Widget>[
         IconButton(
           onPressed: () {

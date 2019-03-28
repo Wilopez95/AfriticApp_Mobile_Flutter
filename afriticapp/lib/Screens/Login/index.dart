@@ -71,7 +71,7 @@ class LoginScreenState extends State<LoginScreen>
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Recuperar Contraseña'),
+            title: Text('Recuperar contraseña'),
             content: TextField(
               decoration: InputDecoration(hintText: "Correo"),
               cursorColor: Color.fromRGBO(247, 64, 106, 1.0),

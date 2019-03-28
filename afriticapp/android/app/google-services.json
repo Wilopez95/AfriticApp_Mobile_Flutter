@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "925994158059",
+    "firebase_url": "https://afriticapp-e23aa.firebaseio.com",
+    "project_id": "afriticapp-e23aa",
+    "storage_bucket": "afriticapp-e23aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:925994158059:android:35a401536f439e0c",
+        "android_client_info": {
+          "package_name": "com.afriticapp.afriticapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "925994158059-22uo60pc4filbi35mcgdv1s3d32fevpe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.afriticapp.afriticapp",
+            "certificate_hash": "79f26c569f7521c3ce700af7d897f11df83bf4c9"
+          }
+        },
+        {
+          "client_id": "925994158059-j68s2g40b1dkd2ajp4svj00qthmuhgr8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdqgbhqdJ3YzF_RHgM4vXtoMP1EIzpYgk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "925994158059-j68s2g40b1dkd2ajp4svj00qthmuhgr8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -324,7 +324,33 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: Column(
           children: <Widget>[
             Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+                  new GestureDetector(
+                      onTap: (){
+                        print("Container clicked");
+                      },
+                      child: new Container(
+                        width: 190.0,
+                        height: 190.0,
+                        decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                            fit: BoxFit.fill,
+                            image: new NetworkImage(
+                                "https://res.cloudinary.com/demo/image/upload/q_auto/woman.jpg")
+                        )
+                    )),
+                  ),
+                    
+                new Text("Joselyn Arias",
+                    textScaleFactor: 1.5)
+              ],
+            ),
+            Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: flagadmin? botonesmenuadm:botonesmenu
