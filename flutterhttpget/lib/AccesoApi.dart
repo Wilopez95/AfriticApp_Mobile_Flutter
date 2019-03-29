@@ -5,13 +5,20 @@ import 'dart:convert';
 class AccesoApi{
 
   Future<String> loadFromAssets(url) async {
-      var response = await http.get(
-        //Encode the url
-        Uri.encodeFull(url),
-        //only accept json response
-        headers: {"Accept": "application/json"}
-      );
-      return response.body;
+      try{
+        var response = await http.get(
+          //Encode the url
+          Uri.encodeFull(url),
+          //only accept json response
+          headers: {"Accept": "application/json"}
+        );
+
+        return response.body;
+      }
+
+      catch(e){
+        print(e.toString());
+      }
   }
 
   Future getFromApi(url) async {
@@ -26,34 +33,33 @@ class AccesoApi{
       }
   }
 
-  Future postToApi() async {
+  Future<String> loadToAssets(url, map) async{
     try{
-      http.post(
-        Uri.encodeFull("https://afriticapp.herokuapp.com/Productos/Registrar/"), 
+     var response = await http.post(
+        Uri.encodeFull(url), 
         
-        body:{
-
-        "Nombre": "Collar",
-        "Descripcion": "colls voos colasr",
-        "Img_url": "http:// imagenlinda.com",
-        "Tipo_Producto": "CO",
-        "Precio": "2000",
-        "Cantidad": "30"
-
-
-        }
+        body: map
         
-      ).then(
-            (response){
-            print("Response status: ${response.statusCode}");
-            print("Response body: ${response.body}");
-            }
-          );
+      );
+
+      return response.body;
     }
     catch (e){
       print(e.toString());  
     }
+  }
 
+  Future postToApi(url, map) async {
+    try{
+        String jsonString = await loadToAssets(url, map);
+        final jsonResponse = json.decode(jsonString);
+        print(jsonResponse.toString());
+        return jsonResponse;
+      }
+
+      catch (e){
+        print(e.toString());
+      }
   }
 
 }

@@ -24,10 +24,6 @@ class PedidosControlador{
 
   List<Pedido> ListaPedidos = new List<Pedido>();
 
-  RegistrarPedido(){
-    //Código para cuando esté el post listo.
-  }
-
   CargarPedidos(jsonResponse){
     Pedido pedido;
     for(int i = 0; i<jsonResponse.length; i++)

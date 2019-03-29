@@ -24,15 +24,24 @@ class Product{
     );
   }
 
+  bool compare(String key){
+    List<dynamic> Atributes=[this.ProductID, this.Estado_Producto, this.Nombre, this.Descripcion,
+    this.Img_url, this.Tipo_Producto, this.Precio, this.Cantidad];
+
+    for (var i = 0; i < Atributes.length; i++) {
+      if (Atributes[i].toString().contains(key)){
+        return true;
+      }
+    }
+    return false;
+  }
+
 }
 
 class ProductosControlador{
 
   List<Product> Inventario = new List<Product>();
-
-  RegistrarProducto(){
-    //Código para cuando esté el post listo.
-  }
+  List<Product> Resultados = new List<Product>();
 
   CargarProductos(jsonResponse){
     Product Producto;
@@ -43,12 +52,17 @@ class ProductosControlador{
       }
   }
 
-  BuscarProductos(){
-
+  BuscarProductos(String key){
+    for (var i = 0; i < this.Inventario.length; i++) {
+      if (this.Inventario[i].compare(key)){
+        Resultados.add(this.Inventario[i]);
+        print(this.Inventario[i].ProductID.toString());
+      }
+    }
   }
   
   EliminarProducto(){
-    //Código para cuando esté el post listo.
+    //Código para cuando esté el eliminar en django.
   }
   ModificarProducto(){
     //Código para cuando esté el post listo.

@@ -19,7 +19,6 @@ class HomePageState extends State<HomePage>{
 void initState()
 {
   super.initState();
-  this.controlador.Acceso.postToApi();
 }
 
   @override

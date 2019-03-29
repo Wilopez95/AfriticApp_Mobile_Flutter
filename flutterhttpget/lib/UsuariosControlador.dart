@@ -30,13 +30,11 @@ class User{
 class UsuariosControlador{
   
   List<User> ListaUsuarios= new List<User>();
-  
-  Future<List> getLista() async{
-    return this.ListaUsuarios;
-  }
+  User Logueado;
 
-  RegistrarUsuario(){
-    //Código para cuando esté el post listo.
+  Login(jsonResponse){
+    this.Logueado = new User.fromJson(jsonResponse);
+    print(this.Logueado.Nombre);
   }
 
   CargarUsuario(jsonResponse){
@@ -49,13 +47,11 @@ class UsuariosControlador{
   }
 
   BuscarUsuario(){
-    for (var i = 0; i < this.ListaUsuarios.length; i++) {
-      
-    }
+    
   }
 
   EliminarUsuario(){
-    //Código para cuando esté el post listo.
+    //Código para cuando esté el eliminar en django.
   }
 
   ModificarPedido(){
