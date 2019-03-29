@@ -1,0 +1,4 @@
+#Thu Mar 28 22:29:13 CST 2019
+base.0=/home/ekkran/Documents/AP/AfriticApp/flutterhttpget/build/app/intermediates/transforms/dexMerger/debug/0
+path.0=classes.dex
+renamed.0=classes.dex

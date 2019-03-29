@@ -29,7 +29,7 @@ class AccesoApi{
   Future postToApi() async {
     try{
       http.post(
-        Uri.encodeFull("https://afriticapp.herokuapp.com/Productos/Registrar"), 
+        Uri.encodeFull("https://afriticapp.herokuapp.com/Productos/Registrar/"), 
         
         body:{
 
