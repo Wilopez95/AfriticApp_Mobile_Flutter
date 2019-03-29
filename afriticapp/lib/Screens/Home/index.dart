@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'styles.dart';
@@ -12,6 +14,9 @@ import 'homeAnimation.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:swipedetector/swipedetector.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -19,6 +24,8 @@ class HomeScreen extends StatefulWidget {
   @override
   HomeScreenState createState() => new HomeScreenState();
 }
+File image;
+String filename;
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Animation<double> containerGrowAnimation;
@@ -140,6 +147,14 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     try {
       await _buttonController.forward();
     } on TickerCanceled {}
+  }
+
+  Future _getImage() async{
+    var selectedImagen =await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+     image =selectedImagen;
+     filename =basename(image.path); 
+    });
   }
 
   @override
@@ -330,7 +345,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             children: <Widget>[
                   new GestureDetector(
                       onTap: (){
-                        print("Container clicked");
+                        _getImage();
                       },
                       child: new Container(
                         width: 190.0,
