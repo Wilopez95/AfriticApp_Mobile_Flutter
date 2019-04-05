@@ -1,26 +1,22 @@
+import 'package:afriticapp/API_Acces/ProductosControlador.dart';
 import 'package:flutter/material.dart';
+import 'package:afriticapp/API_Acces/Controlador.dart';
 
-class RowProducto
-{
-  String text;
-  DecorationImage image;
-  RowProducto(this.text,this.image);
-}
 
 class RowProductoBuilder
 {
-  List<RowProducto> listaPedidos = new List<RowProducto>();
+  List<Product> listaPedidos = new List<Product>();
+  Controlador c;
+
+  Future<void> cargarDatos() async
+  {
+    c = new Controlador();
+    await c.Inventario();
+    listaPedidos = c.ProductosC.Inventario;
+  }
 
   RowProductoBuilder()
   {
-    for (var i = 0; i < 3; i++) {
-      listaPedidos.add(
-        new RowProducto(
-          "lala",
-          DecorationImage(
-            image: AssetImage("assets/avatars/avatar-"+(i+1).toString()+".jpg")
-          ))
-      );
-    }
+    
   }
 }

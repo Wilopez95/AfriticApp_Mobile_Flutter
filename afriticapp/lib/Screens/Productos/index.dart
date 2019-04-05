@@ -39,10 +39,16 @@ class ProductosState extends State<Productos> {
       ],
     );
 
-    RowProductoBuilder pedidos =new RowProductoBuilder();
+    RowProductoBuilder productos =new RowProductoBuilder();
 
-    List<PrototipoListaProductos> _items = pedidos.listaPedidos.map(
-      (pedido) => (PrototipoListaProductos(text: pedido.text,image: pedido.image,))
+    List<PrototipoListaProductos> _items = productos.listaPedidos.map(
+      (producto) => (PrototipoListaProductos(
+        text: producto.Nombre,
+        image: DecorationImage(
+            image: NetworkImage(producto.Img_url),
+          )
+        )
+      )
     ).toList();
 
 
@@ -52,13 +58,21 @@ class ProductosState extends State<Productos> {
       body: 
         Stack(
           children: <Widget>[
-            ListView.builder(
-            padding: EdgeInsets.all(5),
-            itemCount: _items.length,
-            itemBuilder: (BuildContext context,int index){
-              return _items[index%_items.length];
-            },
-          )
+            FutureBuilder(
+              future: productos.cargarDatos(),
+              builder: (_,op) {
+                if(op.connectionState == ConnectionState.done)
+                {
+                  return ListView.builder(
+                    padding: EdgeInsets.all(5),
+                    itemCount: _items.length,
+                    itemBuilder: (BuildContext context,int index){
+                      return _items[index%_items.length];
+                    },
+                  );
+                }
+              },
+            )
         ] 
       ),
       floatingActionButton: FloatingActionButton(
