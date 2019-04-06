@@ -383,7 +383,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     return (new WillPopScope(
       onWillPop: () async {
-        return true;
+        return false;
       },
       child: new Scaffold(
         appBar: AppBar(

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:afriticapp/API_Access/Controlador.dart';
+import 'package:afriticapp/API_Access/UsuariosControlador.dart';
 import 'package:flutter/material.dart';
 import 'styles.dart';
 import 'loginAnimation.dart';
@@ -24,12 +25,18 @@ class LoginScreenState extends State<LoginScreen>
     with TickerProviderStateMixin {
   AnimationController _loginButtonController;
   var animationStatus = 0;
+  List <User> listaUsuarios;
+  var correoController = TextEditingController();
+  var passController = TextEditingController();
+
+
+  
   @override
   void initState() {
     super.initState();
     _loginButtonController = new AnimationController(
         duration: new Duration(milliseconds: 3000), vsync: this);
-    animationStatus = 0;
+    estado = -3;
   }
 
   @override
@@ -39,9 +46,6 @@ class LoginScreenState extends State<LoginScreen>
     passController.dispose();
     super.dispose();
   }
-
-  var correoController = TextEditingController();
-  var passController = TextEditingController();
   
 
   Future<Null> _playAnimation() async {
@@ -103,34 +107,13 @@ class LoginScreenState extends State<LoginScreen>
         });
   }
 
-  void enterApp()
-  {
-    setState(() {
-      animationStatus = 1;
-    });
-    _playAnimation();
-  }
-
   int estado = -3;
 
-  Future logIn(correo,pass) async
+  Future<int> logIn(correo,pass) async
   {
-    final c = new Controlador();
-    c.Login(correo, pass).whenComplete(
-      () {
-        estado = c.UsuariosC.estadoLogin;
-        if(estado < 0)
-        {
-          setState(() {
-            animationStatus = 0;
-          });
-        }
-        else
-        {
-          enterApp(); 
-        }
-      }  
-    );    
+    var c = new Controlador();
+    await c.Login(correo, pass);
+    return c.UsuariosC.estadoLogin;    
   }
 
   @override
@@ -140,7 +123,7 @@ class LoginScreenState extends State<LoginScreen>
     SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
-      ]);
+      ]);    
 
     InkWell boton1 = new InkWell
     (
@@ -148,9 +131,17 @@ class LoginScreenState extends State<LoginScreen>
         setState(() {
           
         });
-        logIn(correoController.text, passController.text);
       },
       child: new SignIn());
+
+    StaggerAnimation butAnim = new StaggerAnimation
+    (
+      buttonController:
+          _loginButtonController.view,
+          function: logIn,
+          correo: correoController.text,
+          pass: passController.text,
+    );
 
     return (new WillPopScope(
         onWillPop: _onWillPop,
@@ -190,17 +181,35 @@ class LoginScreenState extends State<LoginScreen>
                                 funcion: _forgotPass,
                               )
                             ],
-                          ),
-                          animationStatus == 0
-                              ? new Padding(
+                          ), 
+                          FutureBuilder(
+                            future: logIn(correoController.text, passController.text),
+                            builder: (_,op)
+                            {
+                              if(op.connectionState == ConnectionState.done)
+                              {
+                                if(op.data < 0)
+                                {
+                                  return new Padding(
                                   padding: const EdgeInsets.only(bottom: 30.0),
                                   child: boton1                                      
-                                  )
-                              : new StaggerAnimation(
-                                  buttonController:
-                                      _loginButtonController.view,
-                                      boton1: boton1,
-                                      ),
+                                  );
+                                }
+                                else
+                                {
+                                  _playAnimation();
+                                  return butAnim;
+                                }
+                              }
+                              else
+                              {
+                                return new Padding(
+                                  padding: const EdgeInsets.only(bottom: 30.0),
+                                  child: boton1                                      
+                                  );
+                              }
+                            },
+                          )
                         ],
                       ),
                     ],

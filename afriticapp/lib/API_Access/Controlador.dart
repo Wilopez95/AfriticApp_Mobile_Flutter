@@ -7,7 +7,12 @@ class Controlador{
 
   static final Controlador instancia = new Controlador._internal();
 
-  Controlador._internal();
+  Controlador._internal(){
+    Acceso = new AccesoApi();
+    ProductosC = new ProductosControlador();
+    UsuariosC = new UsuariosControlador();
+    PedidosC = new PedidosControlador();
+  }
 
   factory Controlador()
   {
@@ -15,10 +20,10 @@ class Controlador{
   }
 
 
-  AccesoApi Acceso = new AccesoApi();
-  ProductosControlador ProductosC = new ProductosControlador();
-  UsuariosControlador UsuariosC = new UsuariosControlador();
-  PedidosControlador PedidosC = new PedidosControlador();
+  AccesoApi Acceso;
+  ProductosControlador ProductosC;
+  UsuariosControlador UsuariosC;
+  PedidosControlador PedidosC;
 
   Future Inventario() async {
     this.Acceso.getFromApi("https://afriticapp.herokuapp.com/Productos/").then((dynamic jsonResponse){
@@ -33,15 +38,22 @@ class Controlador{
   }
   
   Usuarios(){
-    this.Acceso.getFromApi("https://afriticapp.herokuapp.com/Usuarios/").then((dynamic jsonResponse){
-      this.UsuariosC.CargarUsuario(jsonResponse);
+    this.Acceso.getFromApi("https://afriticapp.herokuapp.com/Usuarios/").then(
+      (dynamic jsonResponse){
+        if(jsonResponse is int)
+        {
+          print("Error Usuarios");
+        }
+        else{
+          this.UsuariosC.CargarUsuario(jsonResponse);
+        }
     });
   }
 
-  Future Login(usuario, pass) async {
-
-    var map = {"Correo":usuario,"Contraseña":pass};
-    this.Acceso.postToApi("https://afriticapp.herokuapp.com/Login/", map).then((dynamic jsonResponse){
+  Login(usuario, pass) {
+    var map = {"Correo": usuario,"Contraseña": pass};
+    this.Acceso.postToApi("https://afriticapp.herokuapp.com/Login/", map).then(
+      (dynamic jsonResponse){
       this.UsuariosC.Login(jsonResponse);
     });
   }

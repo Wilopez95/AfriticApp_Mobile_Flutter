@@ -4,12 +4,12 @@ class User{
   final String Nombre;
   final String Apellido;
   final String Correo;
-  //final String Contrasenna;
+  final String Contrasenna;
   final String Img_url;
   final String Tipo_Cuenta;
  
   User(
-      {this.UserID, this.Estado_Cuenta, 
+      {this.UserID, this.Estado_Cuenta, this.Contrasenna,
       this.Nombre, this.Apellido, this.Correo, this.Img_url, this.Tipo_Cuenta});
  
   factory User.fromJson(Map<String, dynamic> json) {
@@ -19,11 +19,13 @@ class User{
       Nombre: json['Nombre'],
       Apellido: json['Apellido'],
       Correo: json['Correo'],
-      //Contrasenna: json['Contraseña'],
+      Contrasenna: json['Contraseña'],
       Img_url: json['Img_url'],
       Tipo_Cuenta: json['Tipo_Cuenta']
     );
   }
+
+  
 
 }
 
@@ -31,28 +33,25 @@ class UsuariosControlador{
   
   List<User> ListaUsuarios= new List<User>();
   User Logueado;
-  int estadoLogin;
+  int estadoLogin = -3;
 
   Login(jsonResponse){
-    if(jsonResponse == "Contraseña incorrecta")
+    print("Respuesta");
+    print(jsonResponse);
+    if(jsonResponse is int)
     {
       estadoLogin = -1;
-    }
-    if(jsonResponse == "Usuario incorrecto")
-    {
-      estadoLogin = -2;
     }
     else
     {
       estadoLogin = 0;
+      this.Logueado = new User.fromJson(jsonResponse);
     }
-    this.Logueado = new User.fromJson(jsonResponse);
-    print(this.Logueado.Nombre);
   }
 
   CargarUsuario(jsonResponse){
     User usuario;
-    ListaUsuarios= new List<User>();
+    ListaUsuarios = new List<User>();
     for(int i = 0; i<jsonResponse.length; i++)
       {
           usuario = new User.fromJson(jsonResponse[i]);

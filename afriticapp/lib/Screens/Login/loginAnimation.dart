@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 class StaggerAnimation extends StatelessWidget {
-  final boton1;
-  StaggerAnimation({Key key, this.buttonController, this.boton1})
+  final Function(dynamic,dynamic) function;
+  final correo, pass;
+  StaggerAnimation({Key key, this.buttonController, 
+  this.function, this.correo, this.pass })
       : buttonSqueezeanimation = new Tween(
           begin: 320.0,
           end: 70.0,
@@ -66,7 +68,7 @@ class StaggerAnimation extends StatelessWidget {
           : containerCircleAnimation.value,
       child: new InkWell(
           onTap: () {
-            _playAnimation();
+            function(correo,pass);
           },
           child: new Hero(
             tag: "fade",
@@ -85,7 +87,15 @@ class StaggerAnimation extends StatelessWidget {
                           : new BorderRadius.all(const Radius.circular(0.0)),
                     ),
                     child: buttonSqueezeanimation.value > 75.0
-                        ? boton1
+                        ? new Text(
+                            "Reanudar Sesion",
+                            style: new TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w300,
+                              letterSpacing: 0.3,
+                            ),
+                          )
                         : buttomZoomOut.value < 300.0
                             ? new CircularProgressIndicator(
                                 value: null,

@@ -33,7 +33,7 @@ class AccesoApi{
       }
   }
 
-  Future<String> loadToAssets(url, map) async{
+  Future loadToAssets(url, map) async{
     try{
      var response = await http.post(
         Uri.encodeFull(url), 
@@ -42,7 +42,7 @@ class AccesoApi{
         
       );
 
-      return response.body;
+      return response;
     }
     catch (e){
       print(e.toString());  
@@ -51,10 +51,18 @@ class AccesoApi{
 
   Future postToApi(url, map) async {
     try{
-        String jsonString = await loadToAssets(url, map);
-        final jsonResponse = json.decode(jsonString);
-        print(jsonResponse.toString());
-        return jsonResponse;
+        http.Response response = await loadToAssets(url, map);
+        if(response.statusCode >= 200 && response.statusCode < 300 )
+        {
+          String jsonString = response.body;
+          final jsonResponse = json.decode(jsonString);
+          return jsonResponse;
+        }
+        else
+        {
+          return response.statusCode;
+        }
+        
       }
 
       catch (e){
