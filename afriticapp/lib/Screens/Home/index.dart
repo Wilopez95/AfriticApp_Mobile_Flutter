@@ -1,19 +1,13 @@
 import 'dart:io';
 
-import 'package:flutter/gestures.dart';
+import 'package:afriticapp/API_Access/Controlador.dart';
 import 'package:flutter/material.dart';
-import 'styles.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/animation.dart';
 import 'dart:async';
 import '../../Components/GenericButton.dart';
-import '../../Components/PrototipoListaProductos.dart';
 import '../../Components/MenuRoundButton.dart';
-import '../../Components/FadeContainer.dart';
-import 'homeAnimation.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
-import 'package:swipedetector/swipedetector.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -38,8 +32,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Animation<EdgeInsets> listSlidePosition;
   Animation<Color> fadeScreenAnimation;
   var animateStatus = 0;
-  String textoPrueba = "Prueba";
-  bool flagadmin = true;
+  bool flagadmin = false;
 
 
 
@@ -134,6 +127,10 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
     );
     _screenController.forward();
+    //init
+    var c = Controlador();
+    flagadmin = c.UsuariosC.Logueado.Tipo_Cuenta == "A";
+
   }
 
   @override
@@ -161,6 +158,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     timeDilation = 0.3;
     Size screenSize = MediaQuery.of(context).size;
+
+    var c = Controlador();
 
     final _controller = new PageController();
 
@@ -332,6 +331,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       )
     );
 
+    var nombre = "${c.UsuariosC.Logueado.Nombre} ${c.UsuariosC.Logueado.Apellido}";
+
     AnimatedContainer menuPage = AnimatedContainer(
         duration: Duration(seconds: 10),
         height: screenSize.height,
@@ -355,12 +356,13 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         image: new DecorationImage(
                             fit: BoxFit.fill,
                             image: new NetworkImage(
-                                "https://res.cloudinary.com/demo/image/upload/q_auto/woman.jpg")
+                              c.UsuariosC.Logueado.Img_url
+                                )
                         )
                     )),
                   ),
                     
-                new Text("Joselyn Arias",
+                new Text(nombre,
                     textScaleFactor: 1.5)
               ],
             ),

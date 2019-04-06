@@ -69,13 +69,24 @@ class ProductosState extends State<Productos> {
                 if(op.connectionState == ConnectionState.done)
                 {
                   var _items = construirLista();
-                  return ListView.builder(
+                  var lista = ListView.builder(
                     padding: EdgeInsets.all(5),
                     itemCount: _items.length,
                     itemBuilder: (BuildContext context,int index){
                       return _items[index%_items.length];
+                    });
+                  return RefreshIndicator(
+                    child: lista,
+                    onRefresh: (){
+                      setState(() {
+                        
+                      });
                     },
                   );
+                }
+                else
+                {
+                  return CircularProgressIndicator();
                 }
               },
             )

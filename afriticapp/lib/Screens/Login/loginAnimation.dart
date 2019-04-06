@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 class StaggerAnimation extends StatelessWidget {
-  final Function(dynamic,dynamic) function;
+  final Future Function() function;
   final correo, pass;
   StaggerAnimation({Key key, this.buttonController, 
   this.function, this.correo, this.pass })
@@ -68,7 +68,7 @@ class StaggerAnimation extends StatelessWidget {
           : containerCircleAnimation.value,
       child: new InkWell(
           onTap: () {
-            function(correo,pass);
+            function();
           },
           child: new Hero(
             tag: "fade",

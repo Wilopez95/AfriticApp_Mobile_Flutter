@@ -125,11 +125,21 @@ class LoginScreenState extends State<LoginScreen>
         DeviceOrientation.portraitDown,
       ]);    
 
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_){
+        if(estado == 0)
+        {
+          _playAnimation();
+        }
+      }
+    );
+
     InkWell boton1 = new InkWell
     (
       onTap: () {
+        var c = Controlador();
         setState(() {
-          
+          estado = c.UsuariosC.estadoLogin;
         });
       },
       child: new SignIn());
@@ -138,7 +148,7 @@ class LoginScreenState extends State<LoginScreen>
     (
       buttonController:
           _loginButtonController.view,
-          function: logIn,
+          function: _playAnimation,
           correo: correoController.text,
           pass: passController.text,
     );
@@ -197,7 +207,6 @@ class LoginScreenState extends State<LoginScreen>
                                 }
                                 else
                                 {
-                                  _playAnimation();
                                   return butAnim;
                                 }
                               }
