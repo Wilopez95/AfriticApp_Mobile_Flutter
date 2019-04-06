@@ -42,21 +42,21 @@ class PedidosState extends State<Pedidos> {
 
     RowPedidoBuilder pedidos =new RowPedidoBuilder();
 
-    List<PrototipoListaPedidos> _items = pedidos.listaPedidos.map(
+    /*List<PrototipoListaPedidos> _items = pedidos.listaPedidos.map(
       (pedido) => (PrototipoListaPedidos(text: pedido.text))
-    ).toList();
+    ).toList();*/
 
 
 
     return new Scaffold(
       appBar: appBar,
-      body: ListView.builder(
-        padding: EdgeInsets.all(5),
+      /*body: ListView.builder(
+       padding: EdgeInsets.all(5),
         itemCount: _items.length,
         itemBuilder: (BuildContext context,int index){
           return _items[index%_items.length];
         },
-      )
+      )*/
     );
   }
   

@@ -4,6 +4,9 @@ import 'package:afriticapp/Screens/Login/index.dart';
 import 'package:afriticapp/Screens/Home/index.dart';
 import 'package:afriticapp/Screens/Productos/index.dart';
 import 'package:afriticapp/Screens/Pedidos/index.dart';
+import 'package:afriticapp/Screens/Changepass/index.dart';
+import 'package:afriticapp/Screens/Administrar/index.dart';
+import 'package:afriticapp/Screens/Estadisticas/index.dart';
 
 class Routes {
   Routes() {
@@ -18,7 +21,6 @@ class Routes {
               builder: (_) => new LoginScreen(),
               settings: settings,
             );
-
           case '/home':
             return new MyCustomRoute(
               builder: (_) => new HomeScreen(),
@@ -34,6 +36,22 @@ class Routes {
               builder: (_) => new Pedidos(),
               settings: settings,
             );
+          case '/changepass':
+            return new MyCustomRoute(
+              builder: (_) => new Changepass(),
+              settings: settings,
+            );
+          case '/estadisticas':
+            return new MyCustomRoute(
+              builder: (_) => new Estadisticas(),
+              settings: settings,
+            );
+          case '/administrar':
+            return new MyCustomRoute(
+              builder: (_) => new Administrar(),
+              settings: settings,
+            );
+
         }
       },
     ));

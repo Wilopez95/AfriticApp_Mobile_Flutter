@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:afriticapp/API_Access/Controlador.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -197,9 +196,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         title: "Cambiar contraseña",
       ),
       onTap: () {
-        setState(() {
-          _controller.jumpToPage(0);
-        });
+        Navigator.pushNamed(context, "/changepass");
       },
     );
 
@@ -208,9 +205,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         title: "Estadistica",
       ),
       onTap: () {
-        setState(() {
-          _controller.jumpToPage(0);
-        });
+        Navigator.pushNamed(context, "/estadisticas");
       },
     );
 
@@ -219,9 +214,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         title: "Administrar",
       ),
       onTap: () {
-        setState(() {
-          _controller.jumpToPage(0);
-        });
+        Navigator.pushNamed(context, "/administrar");
       },
     );
 
