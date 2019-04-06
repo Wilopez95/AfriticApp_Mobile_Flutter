@@ -31,14 +31,28 @@ class UsuariosControlador{
   
   List<User> ListaUsuarios= new List<User>();
   User Logueado;
+  int estadoLogin;
 
   Login(jsonResponse){
+    if(jsonResponse == "Contraseña incorrecta")
+    {
+      estadoLogin = -1;
+    }
+    if(jsonResponse == "Usuario incorrecto")
+    {
+      estadoLogin = -2;
+    }
+    else
+    {
+      estadoLogin = 0;
+    }
     this.Logueado = new User.fromJson(jsonResponse);
     print(this.Logueado.Nombre);
   }
 
   CargarUsuario(jsonResponse){
     User usuario;
+    ListaUsuarios= new List<User>();
     for(int i = 0; i<jsonResponse.length; i++)
       {
           usuario = new User.fromJson(jsonResponse[i]);

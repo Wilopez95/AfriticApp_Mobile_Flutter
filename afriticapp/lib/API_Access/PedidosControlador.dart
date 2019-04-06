@@ -26,6 +26,7 @@ class PedidosControlador{
 
   CargarPedidos(jsonResponse){
     Pedido pedido;
+    ListaPedidos = new List<Pedido>();
     for(int i = 0; i<jsonResponse.length; i++)
       {
           pedido = new Pedido.fromJson(jsonResponse[i]);

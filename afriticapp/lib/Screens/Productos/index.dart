@@ -11,9 +11,24 @@ class Productos extends StatefulWidget{
   
 }
 
+
+
 class ProductosState extends State<Productos> {
 
+  RowProductoBuilder productos = new RowProductoBuilder();
 
+  List construirLista()
+  {
+    return productos.listaPedidos.map(
+      (producto) => (PrototipoListaProductos(
+        text: producto.Nombre,
+        image: DecorationImage(
+            image: NetworkImage(producto.Img_url),
+          )
+        )
+      )
+    ).toList();
+  }
 
 
 
@@ -39,17 +54,7 @@ class ProductosState extends State<Productos> {
       ],
     );
 
-    RowProductoBuilder productos =new RowProductoBuilder();
-
-    List<PrototipoListaProductos> _items = productos.listaPedidos.map(
-      (producto) => (PrototipoListaProductos(
-        text: producto.Nombre,
-        image: DecorationImage(
-            image: NetworkImage(producto.Img_url),
-          )
-        )
-      )
-    ).toList();
+    
 
 
 
@@ -63,6 +68,7 @@ class ProductosState extends State<Productos> {
               builder: (_,op) {
                 if(op.connectionState == ConnectionState.done)
                 {
+                  var _items = construirLista();
                   return ListView.builder(
                     padding: EdgeInsets.all(5),
                     itemCount: _items.length,

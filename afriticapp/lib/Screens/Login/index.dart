@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:afriticapp/API_Access/Controlador.dart';
 import 'package:flutter/material.dart';
 import 'styles.dart';
 import 'loginAnimation.dart';
@@ -28,13 +29,19 @@ class LoginScreenState extends State<LoginScreen>
     super.initState();
     _loginButtonController = new AnimationController(
         duration: new Duration(milliseconds: 3000), vsync: this);
+    animationStatus = 0;
   }
 
   @override
   void dispose() {
     _loginButtonController.dispose();
+    correoController.dispose();
+    passController.dispose();
     super.dispose();
   }
+
+  var correoController = TextEditingController();
+  var passController = TextEditingController();
   
 
   Future<Null> _playAnimation() async {
@@ -96,6 +103,36 @@ class LoginScreenState extends State<LoginScreen>
         });
   }
 
+  void enterApp()
+  {
+    setState(() {
+      animationStatus = 1;
+    });
+    _playAnimation();
+  }
+
+  int estado = -3;
+
+  Future logIn(correo,pass) async
+  {
+    final c = new Controlador();
+    c.Login(correo, pass).whenComplete(
+      () {
+        estado = c.UsuariosC.estadoLogin;
+        if(estado < 0)
+        {
+          setState(() {
+            animationStatus = 0;
+          });
+        }
+        else
+        {
+          enterApp(); 
+        }
+      }  
+    );    
+  }
+
   @override
   Widget build(BuildContext context) {
     timeDilation = 0.4;
@@ -104,6 +141,17 @@ class LoginScreenState extends State<LoginScreen>
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
       ]);
+
+    InkWell boton1 = new InkWell
+    (
+      onTap: () {
+        setState(() {
+          
+        });
+        logIn(correoController.text, passController.text);
+      },
+      child: new SignIn());
+
     return (new WillPopScope(
         onWillPop: _onWillPop,
         child: new Scaffold(
@@ -134,7 +182,10 @@ class LoginScreenState extends State<LoginScreen>
                                 ),
                                 child: new Tick(image: tick),
                               ),              
-                              new FormContainer(),
+                              new FormContainer(
+                                correoController: correoController,
+                                passController: passController,
+                              ),
                               new SignUp(
                                 funcion: _forgotPass,
                               )
@@ -143,18 +194,13 @@ class LoginScreenState extends State<LoginScreen>
                           animationStatus == 0
                               ? new Padding(
                                   padding: const EdgeInsets.only(bottom: 30.0),
-                                  child: new InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          animationStatus = 1;
-                                        });
-                                        _playAnimation();
-                                      },
-                                      child: new SignIn()),
-                                )
+                                  child: boton1                                      
+                                  )
                               : new StaggerAnimation(
                                   buttonController:
-                                      _loginButtonController.view),
+                                      _loginButtonController.view,
+                                      boton1: boton1,
+                                      ),
                         ],
                       ),
                     ],

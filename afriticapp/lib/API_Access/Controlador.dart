@@ -1,7 +1,7 @@
-import 'package:afriticapp/API_Acces/ProductosControlador.dart';
-import 'package:afriticapp/API_Acces/UsuariosControlador.dart';
-import 'package:afriticapp/API_Acces/PedidosControlador.dart';
-import 'package:afriticapp/API_Acces/AccesoApi.dart';
+import 'package:afriticapp/API_Access/ProductosControlador.dart';
+import 'package:afriticapp/API_Access/UsuariosControlador.dart';
+import 'package:afriticapp/API_Access/PedidosControlador.dart';
+import 'package:afriticapp/API_Access/AccesoApi.dart';
 
 class Controlador{
 
@@ -38,10 +38,9 @@ class Controlador{
     });
   }
 
-  Login(usuario, pass){
+  Future Login(usuario, pass) async {
 
-    var map = "";
-
+    var map = {"Correo":usuario,"Contraseña":pass};
     this.Acceso.postToApi("https://afriticapp.herokuapp.com/Login/", map).then((dynamic jsonResponse){
       this.UsuariosC.Login(jsonResponse);
     });

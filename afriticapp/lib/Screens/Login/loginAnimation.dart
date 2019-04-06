@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 class StaggerAnimation extends StatelessWidget {
-  StaggerAnimation({Key key, this.buttonController})
+  final boton1;
+  StaggerAnimation({Key key, this.buttonController, this.boton1})
       : buttonSqueezeanimation = new Tween(
           begin: 320.0,
           end: 70.0,
@@ -84,15 +85,7 @@ class StaggerAnimation extends StatelessWidget {
                           : new BorderRadius.all(const Radius.circular(0.0)),
                     ),
                     child: buttonSqueezeanimation.value > 75.0
-                        ? new Text(
-                            "Iniciar sesión",
-                            style: new TextStyle(
-                              color: Colors.white,
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w300,
-                              letterSpacing: 0.3,
-                            ),
-                          )
+                        ? boton1
                         : buttomZoomOut.value < 300.0
                             ? new CircularProgressIndicator(
                                 value: null,

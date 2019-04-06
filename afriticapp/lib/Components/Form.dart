@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import './InputFields.dart';
 
 class FormContainer extends StatelessWidget {
+  final correoController;
+  final passController;
+  FormContainer({this.correoController,this.passController});
   @override
   Widget build(BuildContext context) {
     return (new Container(
@@ -17,11 +20,13 @@ class FormContainer extends StatelessWidget {
                 hint: "Correo",
                 obscure: false,
                 icon: Icons.person_outline,
+                controller: correoController,
               ),
               new InputFieldArea(
                 hint: "Contraseña",
                 obscure: true,
                 icon: Icons.lock_outline,
+                controller: passController,
               ),
             ],
           )),

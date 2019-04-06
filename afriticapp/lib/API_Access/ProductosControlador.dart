@@ -45,6 +45,7 @@ class ProductosControlador{
 
   CargarProductos(jsonResponse){
     Product Producto;
+    Inventario = new List<Product>();
     for(int i = 0; i<jsonResponse.length; i++)
       {
           Producto = new Product.fromJson(jsonResponse[i]);
