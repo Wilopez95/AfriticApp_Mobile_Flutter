@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:afriticapp/Screens/Pedidos/data.dart';
+import '../../Components/GenericButton.dart';
 
 
 class Estadisticas extends StatefulWidget
@@ -18,39 +18,80 @@ class EstadisticasState extends State<Estadisticas> {
   {
     Size screenSize = MediaQuery.of(context).size;
 
+        GestureDetector bestadisticas = new GestureDetector(
+            child: 
+            GenericButton(
+              title: "Nu se xD",
+            ),
+            onTap: (){
+              //Navigator.pushNamed(context, "/pedidos");
+            },
+          );
+
 
 
     AppBar appBar = new AppBar(
       title: Text("Estadisticas"),
+      backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
       actions: <Widget>[
-        IconButton(
-          onPressed: () {
-
-          },
-          icon: new Icon(Icons.search),
-          alignment: AlignmentDirectional.centerEnd,
-        ),
-        IconButton(
-          onPressed: (){
-
-          },
-          icon: Icon(Icons.menu),
-        )
+        
       ],
     );
 
+    AnimatedContainer estadisticas = AnimatedContainer(
+      duration: Duration(seconds: 10),
+      height: screenSize.height,
+      width: screenSize.width,
+      decoration: BoxDecoration(
+      gradient: new LinearGradient(
+        colors: <Color>[
+          const Color.fromRGBO(162, 146, 199, 0.8),
+          const Color.fromRGBO(51, 51, 63, 0.9),
+        ],
+        stops: [0.2, 1.0],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(0.0, 1.0),
+      )),  
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                child:bestadisticas ,
+                padding: EdgeInsets.all(15),
+              ),
 
-
-    return new Scaffold(
-      appBar: appBar,
-      /*body: ListView.builder(
-       padding: EdgeInsets.all(5),
-        itemCount: _items.length,
-        itemBuilder: (BuildContext context,int index){
-          return _items[index%_items.length];
-        },
-      )*/
+            ],            
+          )
+        ],
+      ),
     );
+
+
+
+    List<Widget> _pages = <Widget>[
+      estadisticas,
+    ];
+
+    return (new WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        body:Center(
+          child: PageView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },       
+          ),
+        ),
+      ),
+    ));
   }
   
 }

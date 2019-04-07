@@ -19,6 +19,7 @@ class InputFieldArea extends StatelessWidget {
       ),
       child: new TextFormField(
         controller: controller,
+        textAlign: TextAlign.center,
         obscureText: obscure,
         style: const TextStyle(
           color: Colors.white,
