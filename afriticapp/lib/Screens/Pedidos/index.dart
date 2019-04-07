@@ -28,7 +28,8 @@ class PedidosState extends State<Pedidos> {
   Widget build(BuildContext context)
   {
     AppBar appBar = new AppBar(
-      title: Text("AfriticaApp"),
+      title: Text("Pedidos"),
+      backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
       actions: <Widget>[
         IconButton(
           onPressed: () {
@@ -46,6 +47,7 @@ class PedidosState extends State<Pedidos> {
       ],
     );
 
+<<<<<<< HEAD
 
 
     return new Scaffold(
@@ -80,8 +82,62 @@ class PedidosState extends State<Pedidos> {
               },
             )
         ],
+=======
+AnimatedContainer pedidosconteiner = AnimatedContainer(
+  duration: Duration(seconds: 10),
+      height: screenSize.height,
+      width: screenSize.width,
+      decoration: BoxDecoration(
+      gradient: new LinearGradient(
+        colors: <Color>[
+          const Color.fromRGBO(162, 146, 199, 0.8),
+          const Color.fromRGBO(51, 51, 63, 0.9),
+        ],
+        stops: [0.2, 1.0],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(0.0, 1.0),
+      )),  
+      child: Stack(
+        children: <Widget>[
+
+        ] 
+
+      ),
+);
+    
+
+    List<Widget> _pages = <Widget>[
+      pedidosconteiner,
+    ];
+
+
+
+
+      return (new WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        body:Center(
+          child: PageView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },       
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+        backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+        child: Icon(
+          
+          Icons.add,
+        ),
+>>>>>>> 7c01360ab077dcf4c5ba7290e32448350c1829c4
       )
-    );
+      ),
+    ));
+
   }
   
 }

@@ -34,8 +34,9 @@ class ProductosState extends State<Productos> {
 
   Widget build(BuildContext context)
   {
+    Size screenSize = MediaQuery.of(context).size;
     AppBar appBar = new AppBar(
-      title: Text("AfriticaApp"),
+      title: Text("Productos"),
       backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
       actions: <Widget>[
         IconButton(
@@ -54,15 +55,22 @@ class ProductosState extends State<Productos> {
       ],
     );
 
-    
-
-
-
-    return new Scaffold(
-      appBar: appBar,
-      body: 
-        Stack(
-          children: <Widget>[
+AnimatedContainer productosconteiner = AnimatedContainer(
+  duration: Duration(seconds: 10),
+      height: screenSize.height,
+      width: screenSize.width,
+      decoration: BoxDecoration(
+      gradient: new LinearGradient(
+        colors: <Color>[
+          const Color.fromRGBO(162, 146, 199, 0.8),
+          const Color.fromRGBO(51, 51, 63, 0.9),
+        ],
+        stops: [0.2, 1.0],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(0.0, 1.0),
+      )),  
+      child: Stack(
+        children: <Widget>[
             FutureBuilder(
               future: productos.cargarDatos(),
               builder: (_,op) {
@@ -91,13 +99,42 @@ class ProductosState extends State<Productos> {
               },
             )
         ] 
+
       ),
-      floatingActionButton: FloatingActionButton(
+);
+    
+
+    List<Widget> _pages = <Widget>[
+      productosconteiner,
+    ];
+
+
+
+
+      return (new WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        body:Center(
+          child: PageView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },       
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+        backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
         child: Icon(
+          
           Icons.add,
         ),
       )
-    );
+      ),
+    ));
+
   }
   
 }
