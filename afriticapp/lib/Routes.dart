@@ -9,6 +9,7 @@ import 'package:afriticapp/Screens/Administrar/index.dart';
 import 'package:afriticapp/Screens/Estadisticas/index.dart';
 import 'package:afriticapp/Screens/Producto_detalle/index.dart';
 import 'package:afriticapp/Screens/AgregarProducto/index.dart';
+import 'package:afriticapp/Screens/AgregarPedido/index.dart';
 
 class Routes {
   Routes() {
@@ -61,6 +62,11 @@ class Routes {
           case '/add_prod':
             return new MyCustomRoute(
               builder: (_) => new AddProducto(),
+              settings: settings,
+            );
+            case '/add_ped':
+            return new MyCustomRoute(
+              builder: (_) => new AddOrder(),
               settings: settings,
             );
 

@@ -31,13 +31,14 @@ class ChangepassState extends State<Changepass> {
           );
 
 
-          GestureDetector oldpass = GestureDetector(
-            child: 
+        
+            InputFieldArea oldpass = 
             InputFieldArea(
               hint: "Contraseña actual",
               obscure: true,
-            ),
-          );
+            );
+    
+
           InputFieldArea newpass =  
             InputFieldArea(
               hint: "Nueva contraseña",
@@ -45,7 +46,6 @@ class ChangepassState extends State<Changepass> {
           );
           InputFieldArea confirmpass =  
             InputFieldArea(
-              
               hint: "Confirme nueva contraseña",
               obscure: true,
             );
@@ -115,6 +115,7 @@ class ChangepassState extends State<Changepass> {
       },
       child: Scaffold(
         appBar: appBar,
+        resizeToAvoidBottomPadding: false,
         body:Stack(
           children: <Widget>[
             Center(

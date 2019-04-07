@@ -13,7 +13,7 @@ class InputFieldArea extends StatelessWidget {
         border: new Border(
           bottom: new BorderSide(
             width: 0.5,
-            color: Colors.white24,
+            color: Colors.white,
           ),
         ),
       ),
@@ -22,7 +22,7 @@ class InputFieldArea extends StatelessWidget {
         textAlign: TextAlign.center,
         obscureText: obscure,
         style: const TextStyle(
-          color: Colors.white,
+          color: Color.fromRGBO(247, 64, 106, 1.0),
         ),
         decoration: new InputDecoration(
           icon: new Icon(
@@ -31,7 +31,7 @@ class InputFieldArea extends StatelessWidget {
           ),
           border: InputBorder.none,
           hintText: hint,
-          hintStyle: const TextStyle(color: Colors.white, fontSize: 15.0),
+          hintStyle: const TextStyle(color: Color.fromRGBO(247, 64, 106, 1.0), fontSize: 15.0),
           contentPadding: const EdgeInsets.only(
               top: 30.0, right: 30.0, bottom: 30.0, left: 5.0),
         ),

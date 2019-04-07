@@ -94,6 +94,10 @@ AnimatedContainer pedidosconteiner = AnimatedContainer(
         ),
         floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+        onPressed: ()
+          {
+            Navigator.pushNamed(context, "/add_ped");
+          },
         child: Icon(
           
           Icons.add,

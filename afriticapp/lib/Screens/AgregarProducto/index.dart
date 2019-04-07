@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import '../../Components/InputFields.dart';
+import '../../Components/InputNumFields.dart';
 import '../../Components/GenericButton.dart';
+
+String dropdownValue = 'Pulsera';
 
 class AddProducto extends StatefulWidget
 {
@@ -57,103 +60,173 @@ class AddProductoState extends State<AddProducto> {
   Widget build(BuildContext context)
   {
     var screenSize = MediaQuery.of(context).size;
-       
-    var fields = <Widget>[
-      Padding(
-        padding: EdgeInsets.all(15),
-        child: new GestureDetector(
-                      onTap: (){
-                        _getImage();
-                      },
-                      child: new Container(
-                        width: 190.0,
-                        height: 190.0,
-                        decoration: new BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: new DecorationImage(
-                            fit: BoxFit.fill,
-                            image: new NetworkImage(
-                              "https://www.freeiconspng.com/uploads/no-image-icon-32.png"
-                                )
-                        )
-                    )),
+
+        GestureDetector bsaveproduct = new GestureDetector(
+            child: 
+            GenericButton(
+              title: "Añadir",
+            ),
+            onTap: (){
+              //Navigator.pushNamed(context, "/pedidos");
+            },
+          );
+
+           InputFieldArea nombre = 
+            InputFieldArea(
+              hint: "Nombre",
+              obscure: false,
+            );
+ 
+            InputFieldArea descripcion = 
+            InputFieldArea(
+              hint: "Descripcion",
+              obscure: false,
+            );
+
+            InputNumFieldArea precio = 
+            InputNumFieldArea(
+              hint: "Precio",
+              obscure: false,
+            );
+
+            InputNumFieldArea cantidad = 
+            InputNumFieldArea(
+              hint: "Cantidad",
+              obscure: false,
+            );
+
+            AppBar appBar = new AppBar(
+              title: Text("Nuevo Producto"),
+              backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+              actions: <Widget>[
+              ],
+            );
+
+            GestureDetector tipo_product = new GestureDetector(
+                child: DropdownButton<String>(
+                  value: dropdownValue,
+                  style: const TextStyle(
+                  color: Color.fromRGBO(247, 64, 106, 1.0),
+                  ),                  
+                  onChanged: (String newValue) {
+                    setState(() {
+                      dropdownValue = newValue;
+                    });
+                  },
+                  items: <String>['Pulsera', 'Collar', 'Camisa', 'Turbante', 'Bufanda']
+                    .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    })
+                    .toList(),
+                ),
+
+            );
+
+             AnimatedContainer newproduct = AnimatedContainer(
+                duration: Duration(seconds: 10),
+                decoration: BoxDecoration(
+                  gradient: new LinearGradient(
+                    colors: <Color>[
+                      const Color.fromRGBO(162, 146, 199, 0.8),
+                      const Color.fromRGBO(51, 51, 63, 0.9),
+                    ],
+                    stops: [0.2, 1.0],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(0.0, 1.0),
+                  )),  
+                  child: Stack(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                          padding: EdgeInsets.all(15),
+                          child: new GestureDetector(
+                          onTap: (){
+                          _getImage();
+                              },
+                              child: new Container(
+                                width: 190.0,
+                                height: 190.0,
+                                decoration: new BoxDecoration(
+                                border: new Border.all(
+                                  color: Colors.blue,
+                                  width: 1.5,
+                                ),
+                                shape: BoxShape.circle,
+                                image: new DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: new NetworkImage(
+                                      "https://www.freeiconspng.com/uploads/no-image-icon-32.png"
+                                          )
+                                        )
+                                    )),
+                                  ),
+                          ),
+                          Padding(
+                            child: nombre,
+                            padding: EdgeInsets.all(15),
+                          ),
+                          Padding(
+                            child: descripcion,
+                            padding: EdgeInsets.all(15),
+                          ),
+                           Padding(
+                            child: tipo_product,
+                            padding: EdgeInsets.all(15),
+                          ),
+                          Padding(
+                            child: precio,
+                            padding: EdgeInsets.all(15),
+                          ),                   
+                          Padding(
+                            child: cantidad,     
+                            padding: EdgeInsets.all(15),
+                          ),
+                          Padding(
+                            child: bsaveproduct,
+                            padding: EdgeInsets.all(15),
+                          )
+                        ],
+                      )
+                    ],
                   ),
-      ),
-      Padding(
-        padding: EdgeInsets.all(15),
-        child: InputFieldArea(
-          hint: "Nombre",
-          obscure: false,
-          controller: nombreController,
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.all(15),
-        child: InputFieldArea(
-          hint: "Descripcion",
-          obscure: false,
-          controller: descController,
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.all(15),
-        child: InputFieldArea(
-          hint: "Tipo Producto",
-          obscure: false,
-          controller: tipoController,
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.all(15),
-        child: InputFieldArea(
-          hint: "Precio",
-          obscure: false,
-          controller: precioController,
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.all(15),
-        child: InputFieldArea(
-          hint: "Cantidad",
-          obscure: false,
-          controller: cantController,
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.all(15),
-        child: GestureDetector(
-          onTap: (){
-            add();
-            Navigator.pop(context);
-          },
-          child: GenericButton(
-            title: "Añadir",
-          ),
-        ),
-      )
+             );
+
+       
+
+    List<Widget> _pages = <Widget>[
+      newproduct,
     ];
     
-    return new Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("Agregar Producto"),
-      ),
 
-      body: Stack(
-        children: <Widget>[
-          Container(
-            height: screenSize.height,
-            width: screenSize.width,
-            color: const Color.fromRGBO(162, 146, 199, 0.8),
-            child: Center(
-              child: ListView(
-                children: fields,
-              ),
-            ),
-          )
-        ],
-      ),
+        return (new WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        resizeToAvoidBottomPadding: false,
+        body:Stack(
+          children: <Widget>[
+            Center(
+              child: ListView.builder(
+              itemCount: 1,
+              itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },       
+          ),
+        ),
 
-    );
+          ],
+        )
+
+      ),
+    ));
   }  
 }

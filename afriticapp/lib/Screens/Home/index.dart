@@ -346,6 +346,10 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         width: 190.0,
                         height: 190.0,
                         decoration: new BoxDecoration(
+                          border: new Border.all(
+                             color: Colors.blue,
+                             width: 1.5,
+                          ),
                         shape: BoxShape.circle,
                         image: new DecorationImage(
                             fit: BoxFit.fill,
