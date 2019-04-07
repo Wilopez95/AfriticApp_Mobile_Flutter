@@ -13,14 +13,20 @@ class Pedidos extends StatefulWidget
 
 class PedidosState extends State<Pedidos> {
 
-  
+  RowPedidoBuilder pedidos =new RowPedidoBuilder();
+
+  List construirLista()
+  {
+    return pedidos.listaPedidos.map(
+      (pedido) => (PrototipoListaPedidos(
+        text: pedido.PedidoID.toString(),
+        )
+      )
+    ).toList();
+  }
 
   Widget build(BuildContext context)
   {
-    Size screenSize = MediaQuery.of(context).size;
-
-
-
     AppBar appBar = new AppBar(
       title: Text("AfriticaApp"),
       actions: <Widget>[
@@ -40,22 +46,40 @@ class PedidosState extends State<Pedidos> {
       ],
     );
 
-    RowPedidoBuilder pedidos =new RowPedidoBuilder();
-
-    List<PrototipoListaPedidos> _items = pedidos.listaPedidos.map(
-      (pedido) => (PrototipoListaPedidos(text: pedido.text))
-    ).toList();
-
 
 
     return new Scaffold(
       appBar: appBar,
-      body: ListView.builder(
-        padding: EdgeInsets.all(5),
-        itemCount: _items.length,
-        itemBuilder: (BuildContext context,int index){
-          return _items[index%_items.length];
-        },
+      body: Stack(
+        children: <Widget>[
+          FutureBuilder(
+              future: pedidos.cargarDatos(),
+              builder: (_,op) {
+                if(op.connectionState == ConnectionState.done)
+                {
+                  var _items = construirLista();
+                  var lista = ListView.builder(
+                    padding: EdgeInsets.all(5),
+                    itemCount: _items.length,
+                    itemBuilder: (BuildContext context,int index){
+                      return _items[index%_items.length];
+                    });
+                  return RefreshIndicator(
+                    child: lista,
+                    onRefresh: (){
+                      setState(() {
+                        
+                      });
+                    },
+                  );
+                }
+                else
+                {
+                  return CircularProgressIndicator();
+                }
+              },
+            )
+        ],
       )
     );
   }

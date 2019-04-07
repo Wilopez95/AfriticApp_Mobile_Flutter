@@ -1,23 +1,21 @@
+import 'package:afriticapp/API_Access/PedidosControlador.dart';
 import 'package:flutter/material.dart';
-
-class RowPedido
-{
-  String text;
-  RowPedido(this.text);
-}
+import 'package:afriticapp/API_Access/Controlador.dart';
 
 class RowPedidoBuilder
 {
-  List<RowPedido> listaPedidos = new List<RowPedido>();
+  List<Pedido> listaPedidos = new List<Pedido>();
+  Controlador c;
+
+  Future<void> cargarDatos() async
+  {
+    c = new Controlador();
+    await c.Pedidos();
+    listaPedidos = c.PedidosC.ListaPedidos;
+  }
 
   RowPedidoBuilder()
   {
-    for (var i = 0; i < 3; i++) {
-      listaPedidos.add(
-        new RowPedido(
-          "lala"
-        )
-      );
-    }
+    
   }
 }

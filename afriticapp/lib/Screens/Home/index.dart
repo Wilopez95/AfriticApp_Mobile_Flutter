@@ -231,7 +231,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
       onTap: () {
         setState(() {
-          _controller.jumpToPage(0);
+          Navigator.pop(context);
         });
       },
     );
