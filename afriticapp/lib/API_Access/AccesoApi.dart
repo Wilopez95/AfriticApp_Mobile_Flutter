@@ -38,7 +38,10 @@ class AccesoApi{
      var response = await http.post(
         Uri.encodeFull(url), 
         
-        body: map
+        body: json.encode(map),
+        headers:{
+          'Content-type' : 'application/json', 
+          "Accept": "application/json"}
         
       );
 
@@ -60,6 +63,7 @@ class AccesoApi{
         }
         else
         {
+          print(response.body);
           return response.statusCode;
         }
         

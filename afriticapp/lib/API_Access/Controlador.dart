@@ -59,11 +59,18 @@ class Controlador{
   }
 
   Escribir(int link, var map){
-    List<String> Links = ["https://afriticapp.herokuapp.com/Registrar/",
+    List<String> links = ["https://afriticapp.herokuapp.com/Registrar/",
                           "https://afriticapp.herokuapp.com/Productos/Registrar/",
                            "https://afriticapp.herokuapp.com/Pedidos/Registrar/",
                            "https://afriticapp.herokuapp.com/Usuarios/Changepass/"];
-    this.Acceso.postToApi(Links[link], map);
+    this.Acceso.postToApi(links[link], map).then(
+      (response){
+        if(response is int)
+        {
+          print("Error de escritura ${links[link]}");
+        }
+      }
+    );
   }
 
   APIparametros(int link, int id){

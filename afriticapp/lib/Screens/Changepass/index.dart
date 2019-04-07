@@ -38,21 +38,17 @@ class ChangepassState extends State<Changepass> {
               obscure: true,
             ),
           );
-          GestureDetector newpass = GestureDetector(
-            child: 
+          InputFieldArea newpass =  
             InputFieldArea(
               hint: "Nueva contraseña",
               obscure: true,
-            ),
           );
-          GestureDetector confirmpass = GestureDetector(
-            child: 
+          InputFieldArea confirmpass =  
             InputFieldArea(
               
               hint: "Confirme nueva contraseña",
               obscure: true,
-            ),
-          );
+            );
 
 
 

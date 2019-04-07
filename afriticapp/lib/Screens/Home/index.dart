@@ -17,8 +17,7 @@ class HomeScreen extends StatefulWidget {
   @override
   HomeScreenState createState() => new HomeScreenState();
 }
-File image;
-String filename;
+
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Animation<double> containerGrowAnimation;
@@ -30,6 +29,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Animation<Alignment> buttonSwingAnimation;
   Animation<EdgeInsets> listSlidePosition;
   Animation<Color> fadeScreenAnimation;
+  File image;
+  String filename;
   var animateStatus = 0;
   bool flagadmin = false;
 

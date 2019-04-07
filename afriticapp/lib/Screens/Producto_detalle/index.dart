@@ -1,45 +1,74 @@
 import 'package:flutter/material.dart';
 import '../../Components/GenericButton.dart';
+import '../../API_Access/Controlador.dart';
+import '../Productos/data.dart';
 
 
-class Administrar extends StatefulWidget
+class DetalleProducto extends StatefulWidget
 {
-  const Administrar ({Key key}):super(key:key);
+  const DetalleProducto ({Key key}):super(key:key);
 
   @override
-  AdministrarState createState() => new AdministrarState();
+  DetalleProductoState createState() => new DetalleProductoState();
 }
 
-class AdministrarState extends State<Administrar> {
+class DetalleProductoState extends State<DetalleProducto> {
 
   
 
   Widget build(BuildContext context)
   {
     Size screenSize = MediaQuery.of(context).size;
-
-        GestureDetector bcrearuser = new GestureDetector(
-            child: 
-            GenericButton(
-              title: "Cuenta nueva",
-            ),
-            onTap: (){
-              //Navigator.pushNamed(context, "/pedidos");
-            },
-          );
-
-
+    //producto del dto
+    var prod = ProductoContainer.instance.producto;
 
     AppBar appBar = new AppBar(
-      title: Text("Adminsitrar"),
+      title: Text("${prod.ProductID} ${prod.Nombre}"),
       backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
       actions: <Widget>[
         
       ],
     );
 
-    AnimatedContainer administrar = AnimatedContainer(
-      duration: Duration(seconds: 10),
+    // id,estado,nombre,descripcion,imagen,tipo,precio,cantidad
+
+    var fields = <Widget>[
+      Padding(
+        child: Container(
+          height: screenSize.height/5,
+          width: screenSize.width/5,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(prod.Img_url)
+            ),
+            shape: BoxShape.circle,
+          ),
+        ),
+        padding: EdgeInsets.all(15),
+      ),
+      Padding(
+        child: Text("Descripcion: ${prod.Descripcion}"),
+        padding: EdgeInsets.all(15),
+      ),
+      Padding(
+        child: Text("Precio: ${prod.Precio.toString()}"),
+        padding: EdgeInsets.all(15),
+      ),
+      Padding(
+        child: Text("Cantidad disponible: ${prod.Cantidad}"),
+        padding: EdgeInsets.all(15),
+      ),
+      Padding(
+        child: Text("Tipo: ${prod.Tipo_Producto}"),
+        padding: EdgeInsets.all(15),
+      ),
+      Padding(
+        child: Text("Estado: ${prod.Estado_Producto}"),
+        padding: EdgeInsets.all(15),
+      )
+    ];
+
+    Container administrar = Container(
       height: screenSize.height,
       width: screenSize.width,
       decoration: BoxDecoration(
@@ -58,13 +87,7 @@ class AdministrarState extends State<Administrar> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                child:bcrearuser ,
-                padding: EdgeInsets.all(15),
-              ),
-
-            ],            
+            children: fields            
           )
         ],
       ),

@@ -21,10 +21,7 @@ class ProductosState extends State<Productos> {
   {
     return productos.listaPedidos.map(
       (producto) => (PrototipoListaProductos(
-        text: producto.Nombre,
-        image: DecorationImage(
-            image: NetworkImage(producto.Img_url),
-          )
+        product: producto,
         )
       )
     ).toList();
@@ -55,8 +52,8 @@ class ProductosState extends State<Productos> {
       ],
     );
 
-AnimatedContainer productosconteiner = AnimatedContainer(
-  duration: Duration(seconds: 10),
+    AnimatedContainer productosconteiner = AnimatedContainer(
+      duration: Duration(seconds: 10),
       height: screenSize.height,
       width: screenSize.width,
       decoration: BoxDecoration(
@@ -101,17 +98,14 @@ AnimatedContainer productosconteiner = AnimatedContainer(
         ] 
 
       ),
-);
+    );
     
 
     List<Widget> _pages = <Widget>[
       productosconteiner,
     ];
 
-
-
-
-      return (new WillPopScope(
+    return (new WillPopScope(
       onWillPop: () async {
         return true;
       },
@@ -126,12 +120,15 @@ AnimatedContainer productosconteiner = AnimatedContainer(
           ),
         ),
         floatingActionButton: FloatingActionButton(
-        backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
-        child: Icon(
-          
+          backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+          onPressed: ()
+          {
+            Navigator.pushNamed(context, "/add_prod");
+          },
+          child: Icon(
           Icons.add,
-        ),
-      )
+          ),
+        )
       ),
     ));
 

@@ -1,9 +1,10 @@
+import 'package:afriticapp/API_Access/ProductosControlador.dart';
 import 'package:flutter/material.dart';
+import '../Screens/Productos/data.dart';
 
 class PrototipoListaProductos extends StatelessWidget {
-  PrototipoListaProductos({this.text, this.image});
-  final String text;
-  final DecorationImage image;
+  PrototipoListaProductos({this.product});
+  final Product product;
   @override
   Widget build(BuildContext context) {
     return (new Container(
@@ -13,19 +14,28 @@ class PrototipoListaProductos extends StatelessWidget {
       child: new Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          new Container(
-            width: MediaQuery.of(context).size.height/10,
-            decoration: new BoxDecoration(
-              shape: BoxShape.circle,
-              image: image,
-            ) 
+          InkWell(
+            child: new Container(
+              width: MediaQuery.of(context).size.height/10,
+              decoration: new BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image: NetworkImage(product.Img_url)
+                ),
+              ) 
+            ),
+            onTap: (){
+              var prod = new ProductoContainer();
+              prod.producto = product;
+              Navigator.pushNamed(context, "/desc_prod");
+            },
           ),
           new Padding(
             padding: EdgeInsets.only(left: 10,right: 10),
             child: new Column(
             children: <Widget>[
                 new Text(
-                text,
+                product.Nombre,
                 style: new TextStyle(
                     color: Colors.black,
                     fontSize: 20.0,
@@ -34,7 +44,7 @@ class PrototipoListaProductos extends StatelessWidget {
                   ),
                 ),
                 new Text(
-                text,
+                product.Precio.toString(),
                 style: new TextStyle(
                     color: Colors.black45,
                     fontSize: 20.0,
@@ -47,7 +57,9 @@ class PrototipoListaProductos extends StatelessWidget {
           ),
           new IconButton(
             icon: Icon(Icons.edit),
-            onPressed: null,
+            onPressed: (){
+
+            },
           ),
           new IconButton(
             icon: Icon(Icons.delete),

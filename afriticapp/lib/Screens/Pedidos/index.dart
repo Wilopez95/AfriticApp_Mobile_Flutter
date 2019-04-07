@@ -46,43 +46,8 @@ class PedidosState extends State<Pedidos> {
         )
       ],
     );
+    var screenSize = MediaQuery.of(context).size;
 
-<<<<<<< HEAD
-
-
-    return new Scaffold(
-      appBar: appBar,
-      body: Stack(
-        children: <Widget>[
-          FutureBuilder(
-              future: pedidos.cargarDatos(),
-              builder: (_,op) {
-                if(op.connectionState == ConnectionState.done)
-                {
-                  var _items = construirLista();
-                  var lista = ListView.builder(
-                    padding: EdgeInsets.all(5),
-                    itemCount: _items.length,
-                    itemBuilder: (BuildContext context,int index){
-                      return _items[index%_items.length];
-                    });
-                  return RefreshIndicator(
-                    child: lista,
-                    onRefresh: (){
-                      setState(() {
-                        
-                      });
-                    },
-                  );
-                }
-                else
-                {
-                  return CircularProgressIndicator();
-                }
-              },
-            )
-        ],
-=======
 AnimatedContainer pedidosconteiner = AnimatedContainer(
   duration: Duration(seconds: 10),
       height: screenSize.height,
@@ -133,7 +98,6 @@ AnimatedContainer pedidosconteiner = AnimatedContainer(
           
           Icons.add,
         ),
->>>>>>> 7c01360ab077dcf4c5ba7290e32448350c1829c4
       )
       ),
     ));

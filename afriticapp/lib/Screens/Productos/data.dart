@@ -20,3 +20,20 @@ class RowProductoBuilder
     
   }
 }
+
+//Data transfer object para producto
+class ProductoContainer 
+{
+  static final ProductoContainer instance = new ProductoContainer._internal();
+
+  Product producto;
+
+  ProductoContainer._internal(){
+
+  }
+
+  factory ProductoContainer()
+  {
+    return instance;
+  }
+}
