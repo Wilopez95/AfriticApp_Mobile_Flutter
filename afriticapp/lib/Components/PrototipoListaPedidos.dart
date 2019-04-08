@@ -1,8 +1,11 @@
+import 'package:afriticapp/API_Access/PedidosControlador.dart';
+import 'package:afriticapp/Screens/Pedidos/data.dart';
 import 'package:flutter/material.dart';
 
 class PrototipoListaPedidos extends StatelessWidget {
-  PrototipoListaPedidos({this.text});
-  final String text;
+  PrototipoListaPedidos({this.pedido});
+  final Pedido pedido;
+
   @override
   Widget build(BuildContext context) {
     return (new Container(
@@ -14,10 +17,18 @@ class PrototipoListaPedidos extends StatelessWidget {
         children: <Widget>[
           new Padding(
             padding: EdgeInsets.only(left: 10,right: 10),
+            child:
+            InkWell(
+              onTap: ()
+              {
+                var ped = new PedidoContainer();
+                ped.pedido = pedido;
+                Navigator.pushNamed(context, "/desc_ped");
+              },
             child: new Column(
-            children: <Widget>[
+              children: <Widget>[
                 new Text(
-                text,
+                "${pedido.Cliente}",
                 style: new TextStyle(
                     color: Colors.black,
                     fontSize: 20.0,
@@ -26,7 +37,7 @@ class PrototipoListaPedidos extends StatelessWidget {
                   ),
                 ),
                 new Text(
-                text,
+                "${pedido.Fecha}",
                 style: new TextStyle(
                     color: Colors.black45,
                     fontSize: 20.0,
@@ -36,6 +47,8 @@ class PrototipoListaPedidos extends StatelessWidget {
                 ),
               ],
             ),
+            ) 
+            
           ),
           new IconButton(
             icon: Icon(Icons.edit),

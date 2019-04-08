@@ -30,6 +30,7 @@ class AddProductoState extends State<AddProducto> {
   final tipoController = new TextEditingController();
   final precioController = new TextEditingController();
   final cantController = new TextEditingController();
+  String dropValue;
 
    Future _getImage() async{
     var selectedImagen =await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -47,7 +48,7 @@ class AddProductoState extends State<AddProducto> {
       "Nombre": nombreController.text,
       "Descripcion": descController.text,
       "Img_url" : "nono",
-      "Tipo_Producto": tipoController.text,
+      "Tipo_Producto": dropValue,
       "Precio": precio,
       "Cantidad": cant
     };
@@ -67,7 +68,8 @@ class AddProductoState extends State<AddProducto> {
               title: "Añadir",
             ),
             onTap: (){
-              //Navigator.pushNamed(context, "/pedidos");
+              add();
+              Navigator.pop(context);
             },
           );
 
@@ -75,24 +77,28 @@ class AddProductoState extends State<AddProducto> {
             InputFieldArea(
               hint: "Nombre",
               obscure: false,
+              controller: nombreController,
             );
  
             InputFieldArea descripcion = 
             InputFieldArea(
               hint: "Descripcion",
               obscure: false,
+              controller: descController,
             );
 
             InputNumFieldArea precio = 
             InputNumFieldArea(
               hint: "Precio",
               obscure: false,
+              controller: precioController,
             );
 
             InputNumFieldArea cantidad = 
             InputNumFieldArea(
               hint: "Cantidad",
               obscure: false,
+              controller: cantController,
             );
 
             AppBar appBar = new AppBar(
@@ -102,26 +108,34 @@ class AddProductoState extends State<AddProducto> {
               ],
             );
 
-            GestureDetector tipo_product = new GestureDetector(
-                child: DropdownButton<String>(
-                  value: dropdownValue,
+            var dropOptVal = {
+                    'Pulsera':'PU', 
+                    'Collar':'CO',
+                    'Camisa':'CA',
+                    'Turbante':'TU',
+                    'Bufanda':'BU'};
+            var dropOpt = new List<DropdownMenuItem<String>>();
+
+            dropOptVal.forEach((k,v) {
+                      dropOpt.add(DropdownMenuItem<String>(
+                        value: v,
+                        child: Text(k),
+                        )
+                      );
+                    });
+
+            DropdownButton tipo_product = 
+              DropdownButton<String>(
+                  value: dropValue,
                   style: const TextStyle(
                   color: Color.fromRGBO(247, 64, 106, 1.0),
                   ),                  
                   onChanged: (String newValue) {
                     setState(() {
-                      dropdownValue = newValue;
+                      dropValue = newValue;
                     });
                   },
-                  items: <String>['Pulsera', 'Collar', 'Camisa', 'Turbante', 'Bufanda']
-                    .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    })
-                    .toList(),
-                ),
+                  items: dropOpt
 
             );
 

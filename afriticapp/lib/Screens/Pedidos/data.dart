@@ -19,3 +19,19 @@ class RowPedidoBuilder
     
   }
 }
+
+class PedidoContainer 
+{
+  static final PedidoContainer instance = new PedidoContainer._internal();
+
+  Pedido pedido;
+
+  PedidoContainer._internal(){
+
+  }
+
+  factory PedidoContainer()
+  {
+    return instance;
+  }
+}

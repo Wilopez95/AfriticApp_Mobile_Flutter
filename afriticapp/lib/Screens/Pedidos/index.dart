@@ -13,13 +13,18 @@ class Pedidos extends StatefulWidget
 
 class PedidosState extends State<Pedidos> {
 
-  RowPedidoBuilder pedidos =new RowPedidoBuilder();
+  RowPedidoBuilder pedidos = new RowPedidoBuilder();
+
+  void initState()
+  {
+    
+  }
 
   List construirLista()
   {
     return pedidos.listaPedidos.map(
       (pedido) => (PrototipoListaPedidos(
-        text: pedido.PedidoID.toString(),
+        pedido: pedido,
         )
       )
     ).toList();
@@ -62,21 +67,41 @@ AnimatedContainer pedidosconteiner = AnimatedContainer(
         begin: const FractionalOffset(0.0, 0.0),
         end: const FractionalOffset(0.0, 1.0),
       )),  
-      child: Stack(
-        children: <Widget>[
-
-        ] 
-
-      ),
+      child:
+      FutureBuilder(
+        future: pedidos.cargarDatos(),
+              builder: (_,op) {
+                if(op.connectionState == ConnectionState.done)
+                {
+                  var _items = construirLista();
+                  var lista = ListView.builder(
+                    padding: EdgeInsets.all(5),
+                    itemCount: _items.length,
+                    itemBuilder: (BuildContext context,int index){
+                      return _items[index%_items.length];
+                    });
+                  return RefreshIndicator(
+                    child: lista,
+                    onRefresh: (){
+                      setState(() {
+                        
+                      });
+                    },
+                  );
+                }
+                else
+                {
+                  return CircularProgressIndicator();
+                }
+              },
+      )
+       
 );
     
 
     List<Widget> _pages = <Widget>[
       pedidosconteiner,
     ];
-
-
-
 
       return (new WillPopScope(
       onWillPop: () async {

@@ -79,7 +79,7 @@ class Controlador{
                           "https://afriticapp.herokuapp.com/Usuarios/Activar/",
                           "https://afriticapp.herokuapp.com/Productos/",
                           "https://afriticapp.herokuapp.com/Pedidos/"];
-    this.Acceso.getFromApi(Links[link]+id.toString()+"/");
+    return this.Acceso.getFromApi(Links[link]+id.toString()+"/");
   }
 
 }

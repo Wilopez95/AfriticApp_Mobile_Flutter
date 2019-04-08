@@ -1,3 +1,4 @@
+import 'package:afriticapp/Screens/Pedido_detalle/index.dart';
 import 'package:flutter/material.dart';
 
 import 'package:afriticapp/Screens/Login/index.dart';
@@ -67,6 +68,11 @@ class Routes {
             case '/add_ped':
             return new MyCustomRoute(
               builder: (_) => new AddOrder(),
+              settings: settings,
+            );
+            case '/desc_ped':
+            return new MyCustomRoute(
+              builder: (_) => new DetallePedido(),
               settings: settings,
             );
 

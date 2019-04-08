@@ -1,45 +1,48 @@
 import 'package:flutter/material.dart';
 import '../../Components/GenericButton.dart';
+import '../../API_Access/Controlador.dart';
+import '../Pedidos/data.dart';
 
 
-class Administrar extends StatefulWidget
+class DetallePedido extends StatefulWidget
 {
-  const Administrar ({Key key}):super(key:key);
+  const DetallePedido ({Key key}):super(key:key);
 
   @override
-  AdministrarState createState() => new AdministrarState();
+  DetallePedidoState createState() => new DetallePedidoState();
 }
 
-class AdministrarState extends State<Administrar> {
+class DetallePedidoState extends State<DetallePedido> {
 
   
 
   Widget build(BuildContext context)
   {
     Size screenSize = MediaQuery.of(context).size;
-
-        GestureDetector bcrearuser = new GestureDetector(
-            child: 
-            GenericButton(
-              title: "Cuenta nueva",
-            ),
-            onTap: (){
-              //Navigator.pushNamed(context, "/pedidos");
-            },
-          );
-
-
+    //pedido del dto
+    var pedido = PedidoContainer.instance.pedido;
 
     AppBar appBar = new AppBar(
-      title: Text("Adminsitrar"),
+      title: Text("${pedido.Cliente} ${pedido.Fecha}"),
       backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
       actions: <Widget>[
         
       ],
     );
 
-    AnimatedContainer administrar = AnimatedContainer(
-      duration: Duration(seconds: 10),
+
+    var fields = <Widget>[
+      Padding(
+        child: Text("Precio: ${pedido.Precio_Total}"),
+        padding: EdgeInsets.all(15),
+      ),
+      Padding(
+        child: Text("Estado: ${pedido.Tipo_Estado}"),
+        padding: EdgeInsets.all(15),
+      ),
+    ];
+
+    Container administrar = Container(
       height: screenSize.height,
       width: screenSize.width,
       decoration: BoxDecoration(
@@ -58,13 +61,7 @@ class AdministrarState extends State<Administrar> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                child:bcrearuser ,
-                padding: EdgeInsets.all(15),
-              ),
-
-            ],            
+            children: fields            
           )
         ],
       ),

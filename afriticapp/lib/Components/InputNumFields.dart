@@ -5,7 +5,8 @@ class InputNumFieldArea extends StatelessWidget {
   final bool obscure;
   final IconData icon;
   final controller;
-  InputNumFieldArea({this.hint, this.obscure, this.icon, this.controller});
+  final editEnd;
+  InputNumFieldArea({this.hint, this.obscure, this.editEnd, this.icon, this.controller});
   @override
   Widget build(BuildContext context) {
     return (new Container(
@@ -18,6 +19,7 @@ class InputNumFieldArea extends StatelessWidget {
         ),
       ),
       child: new TextFormField(
+        onEditingComplete: editEnd,
         controller: controller,
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
