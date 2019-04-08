@@ -21,7 +21,7 @@ class EstadisticasState extends State<Estadisticas> {
         GestureDetector bestadisticas = new GestureDetector(
             child: 
             GenericButton(
-              title: "Nu se xD",
+              title: "No implementado",
             ),
             onTap: (){
               //Navigator.pushNamed(context, "/pedidos");

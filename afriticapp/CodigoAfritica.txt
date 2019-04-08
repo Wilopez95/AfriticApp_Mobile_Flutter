@@ -1,0 +1,3259 @@
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
+
+class AccesoApi{
+
+  Future<String> loadFromAssets(url) async {
+      try{
+        var response = await http.get(
+          //Encode the url
+          Uri.encodeFull(url),
+          //only accept json response
+          headers: {"Accept": "application/json"}
+        );
+
+        return response.body;
+      }
+
+      catch(e){
+        print(e.toString());
+      }
+  }
+
+  Future getFromApi(url) async {
+      try{
+        String jsonString = await loadFromAssets(url);
+        final jsonResponse = json.decode(jsonString);
+        return jsonResponse;
+      }
+
+      catch (e){
+        print(e.toString());
+      }
+  }
+
+  Future loadToAssets(url, map) async{
+    try{
+     var response = await http.post(
+        Uri.encodeFull(url), 
+        
+        body: json.encode(map),
+        headers:{
+          'Content-type' : 'application/json', 
+          "Accept": "application/json"}
+        
+      );
+
+      return response;
+    }
+    catch (e){
+      print(e.toString());  
+    }
+  }
+
+  Future postToApi(url, map) async {
+    try{
+        http.Response response = await loadToAssets(url, map);
+        if(response.statusCode >= 200 && response.statusCode < 300 )
+        {
+          String jsonString = response.body;
+          final jsonResponse = json.decode(jsonString);
+          return jsonResponse;
+        }
+        else
+        {
+          print(response.body);
+          return response.statusCode;
+        }
+        
+      }
+
+      catch (e){
+        print(e.toString());
+      }
+  }
+
+}
+
+import 'package:afriticapp/API_Access/ProductosControlador.dart';
+import 'package:afriticapp/API_Access/UsuariosControlador.dart';
+import 'package:afriticapp/API_Access/PedidosControlador.dart';
+import 'package:afriticapp/API_Access/AccesoApi.dart';
+
+class Controlador{
+
+  static final Controlador instancia = new Controlador._internal();
+
+  Controlador._internal(){
+    Acceso = new AccesoApi();
+    ProductosC = new ProductosControlador();
+    UsuariosC = new UsuariosControlador();
+    PedidosC = new PedidosControlador();
+  }
+
+  factory Controlador()
+  {
+    return instancia;
+  }
+
+
+  AccesoApi Acceso;
+  ProductosControlador ProductosC;
+  UsuariosControlador UsuariosC;
+  PedidosControlador PedidosC;
+
+  Future Inventario() async {
+    this.Acceso.getFromApi("https://afriticapp.herokuapp.com/Productos/").then((dynamic jsonResponse){
+      this.ProductosC.CargarProductos(jsonResponse);
+    });
+  }
+
+  Pedidos(){
+    this.Acceso.getFromApi("https://afriticapp.herokuapp.com/Pedidos/").then((dynamic jsonResponse){
+      this.PedidosC.CargarPedidos(jsonResponse);
+    });
+  }
+  
+  Usuarios(){
+    this.Acceso.getFromApi("https://afriticapp.herokuapp.com/Usuarios/").then(
+      (dynamic jsonResponse){
+        if(jsonResponse is int)
+        {
+          print("Error Usuarios");
+        }
+        else{
+          this.UsuariosC.CargarUsuario(jsonResponse);
+        }
+    });
+  }
+
+  Login(usuario, pass) {
+    var map = {"Correo": usuario,"Contraseña": pass};
+    this.Acceso.postToApi("https://afriticapp.herokuapp.com/Login/", map).then(
+      (dynamic jsonResponse){
+      this.UsuariosC.Login(jsonResponse);
+    });
+  }
+
+  Escribir(int link, var map){
+    List<String> links = ["https://afriticapp.herokuapp.com/Registrar/",
+                          "https://afriticapp.herokuapp.com/Productos/Registrar/",
+                           "https://afriticapp.herokuapp.com/Pedidos/Registrar/",
+                           "https://afriticapp.herokuapp.com/Usuarios/Changepass/"];
+    this.Acceso.postToApi(links[link], map).then(
+      (response){
+        if(response is int)
+        {
+          print("Error de escritura ${links[link]}");
+        }
+      }
+    );
+  }
+
+  APIparametros(int link, int id){
+    List<String> Links = ["https://afriticapp.herokuapp.com/Usuarios/Eliminar/",
+                          "https://afriticapp.herokuapp.com/Usuarios/Cambiar/",
+                          "https://afriticapp.herokuapp.com/Usuarios/Activar/",
+                          "https://afriticapp.herokuapp.com/Productos/",
+                          "https://afriticapp.herokuapp.com/Pedidos/"];
+    return this.Acceso.getFromApi(Links[link]+id.toString()+"/");
+  }
+
+}
+
+class Pedido{
+  final int PedidoID;
+  final String Cliente;
+  final String Fecha;
+  final String Tipo_Estado;
+  final int Precio_Total;
+  final int Usuario;
+ 
+  Pedido({this.PedidoID, this.Cliente, this.Fecha, this.Tipo_Estado, this.Precio_Total, this.Usuario});
+ 
+  factory Pedido.fromJson(Map<String, dynamic> json) {
+    return Pedido(
+      PedidoID: json['PedidoID'],
+      Cliente: json['Cliente'],
+      Fecha: json['Fecha'],
+      Tipo_Estado: json['Tipo_Estado'],
+      Precio_Total: json['Precio_Total'],
+      Usuario: json['Usuario']
+    );
+  }
+}
+
+class PedidosControlador{
+
+  List<Pedido> ListaPedidos = new List<Pedido>();
+
+  CargarPedidos(jsonResponse){
+    Pedido pedido;
+    ListaPedidos = new List<Pedido>();
+    for(int i = 0; i<jsonResponse.length; i++)
+      {
+          pedido = new Pedido.fromJson(jsonResponse[i]);
+          this.ListaPedidos.add(pedido);
+      }
+  }
+
+  BuscarPedidos(){
+
+  }
+
+  ModificarPedido(){
+    //Código para cuando esté el post listo.
+  }
+}
+
+class Product{
+  final int ProductID;
+  final String Estado_Producto;
+  final String Nombre;
+  final String Descripcion;
+  final String Img_url;
+  final String Tipo_Producto;
+  final int Precio;
+  final int Cantidad;
+
+  Product({this.ProductID, this.Estado_Producto, this.Nombre, this.Descripcion,
+  this.Img_url, this.Tipo_Producto, this.Precio, this.Cantidad});
+
+  factory Product.fromJson(Map<String, dynamic> json){
+    return Product(
+      ProductID: json['ProductID'],
+      Estado_Producto: json['Estado_Producto'],
+      Nombre: json['Nombre'],
+      Descripcion: json['Descripcion'],
+      Img_url: json['Img_url'],
+      Tipo_Producto: json['Tipo_Producto'],
+      Precio: json['Precio'],
+      Cantidad: json['Cantidad']
+    );
+  }
+
+  bool compare(String key){
+    List<dynamic> Atributes=[this.ProductID, this.Estado_Producto, this.Nombre, this.Descripcion,
+    this.Img_url, this.Tipo_Producto, this.Precio, this.Cantidad];
+
+    for (var i = 0; i < Atributes.length; i++) {
+      if (Atributes[i].toString().contains(key)){
+        return true;
+      }
+    }
+    return false;
+  }
+
+}
+
+class ProductosControlador{
+
+  List<Product> Inventario = new List<Product>();
+  List<Product> Resultados = new List<Product>();
+
+  CargarProductos(jsonResponse){
+    Product Producto;
+    Inventario = new List<Product>();
+    for(int i = 0; i<jsonResponse.length; i++)
+      {
+          Producto = new Product.fromJson(jsonResponse[i]);
+          this.Inventario.add(Producto);
+      }
+  }
+
+  BuscarProductos(String key){
+    for (var i = 0; i < this.Inventario.length; i++) {
+      if (this.Inventario[i].compare(key)){
+        Resultados.add(this.Inventario[i]);
+        print(this.Inventario[i].ProductID.toString());
+      }
+    }
+  }
+  
+  EliminarProducto(){
+    //Código para cuando esté el eliminar en django.
+  }
+  ModificarProducto(){
+    //Código para cuando esté el post listo.
+  }
+}
+
+class User{
+  final int UserID;
+  final String Estado_Cuenta;
+  final String Nombre;
+  final String Apellido;
+  final String Correo;
+  final String Contrasenna;
+  final String Img_url;
+  final String Tipo_Cuenta;
+ 
+  User(
+      {this.UserID, this.Estado_Cuenta, this.Contrasenna,
+      this.Nombre, this.Apellido, this.Correo, this.Img_url, this.Tipo_Cuenta});
+ 
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      UserID: json['UserID'],
+      Estado_Cuenta: json['Estado_Cuenta'],
+      Nombre: json['Nombre'],
+      Apellido: json['Apellido'],
+      Correo: json['Correo'],
+      Contrasenna: json['Contraseña'],
+      Img_url: json['Img_url'],
+      Tipo_Cuenta: json['Tipo_Cuenta']
+    );
+  }
+
+  
+
+}
+
+class UsuariosControlador{
+  
+  List<User> ListaUsuarios= new List<User>();
+  User Logueado;
+  int estadoLogin = -3;
+
+  Login(jsonResponse){
+    print("Respuesta");
+    print(jsonResponse);
+    if(jsonResponse is int)
+    {
+      estadoLogin = -1;
+    }
+    else
+    {
+      estadoLogin = 0;
+      this.Logueado = new User.fromJson(jsonResponse);
+    }
+  }
+
+  CargarUsuario(jsonResponse){
+    User usuario;
+    ListaUsuarios = new List<User>();
+    for(int i = 0; i<jsonResponse.length; i++)
+      {
+          usuario = new User.fromJson(jsonResponse[i]);
+          this.ListaUsuarios.add(usuario);
+      }
+  }
+
+  BuscarUsuario(){
+    
+  }
+
+  EliminarUsuario(){
+    //Código para cuando esté el eliminar en django.
+  }
+
+  ModificarPedido(){
+    //Código para cuando esté el post listo.
+  }
+}
+
+import 'package:flutter/material.dart';
+
+class AddButton extends StatelessWidget {
+  final Animation<double> buttonGrowAnimation;
+  AddButton({this.buttonGrowAnimation});
+  @override
+  Widget build(BuildContext context) {
+    return (new Container(
+      width: buttonGrowAnimation.value * 60,
+      height: buttonGrowAnimation.value * 60,
+      alignment: FractionalOffset.center,
+      decoration: new BoxDecoration(
+          color: const Color.fromRGBO(247, 64, 106, 1.0),
+          shape: BoxShape.circle),
+      child: new Icon(
+        Icons.add,
+        size: buttonGrowAnimation.value * 40.0,
+        color: Colors.white,
+      ),
+    ));
+  }
+}
+
+import 'package:flutter/material.dart';
+
+class FadeBox extends StatelessWidget {
+  final Animation<double> containerGrowAnimation;
+  final Animation<Color> fadeScreenAnimation;
+  FadeBox({this.containerGrowAnimation, this.fadeScreenAnimation});
+  @override
+  Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+    return (new Hero(
+        tag: "fade",
+        child: new Container(
+          width: containerGrowAnimation.value < 1 ? screenSize.width : 0.0,
+          height: containerGrowAnimation.value < 1 ? screenSize.height : 0.0,
+          decoration: new BoxDecoration(
+            color: fadeScreenAnimation.value,
+          ),
+        )));
+  }
+}
+
+import 'package:flutter/material.dart';
+import './InputFields.dart';
+
+class FormContainer extends StatelessWidget {
+  final correoController;
+  final passController;
+  FormContainer({this.correoController,this.passController});
+  @override
+  Widget build(BuildContext context) {
+    return (new Container(
+      margin: new EdgeInsets.symmetric(horizontal: 20.0),
+      child: new Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          new Form(
+              child: new Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              new InputFieldArea(
+                hint: "Correo",
+                obscure: false,
+                icon: Icons.person_outline,
+                controller: correoController,
+              ),
+              new InputFieldArea(
+                hint: "Contraseña",
+                obscure: true,
+                icon: Icons.lock_outline,
+                controller: passController,
+              ),
+            ],
+          )),
+        ],
+      ),
+    ));
+  }
+}
+
+import 'package:flutter/material.dart';
+
+class GenericButton extends StatelessWidget {
+  GenericButton({this.title});
+  final String title;
+  @override
+  Widget build(BuildContext context) {
+    return (new Container(
+      width: 320.0,
+      height: 60.0,
+      alignment: FractionalOffset.center,
+      decoration: new BoxDecoration(
+        color: const Color.fromRGBO(247, 64, 106, 1.0),
+        borderRadius: new BorderRadius.all(const Radius.circular(30.0)),
+      ),
+      child: new Text(
+        title,
+        style: new TextStyle(
+          color: Colors.white,
+          fontSize: 20.0,
+          fontWeight: FontWeight.w300,
+          letterSpacing: 0.3,
+        ),
+      ),
+    ));
+  }
+}
+
+import 'package:flutter/material.dart';
+
+class InputFieldArea extends StatelessWidget {
+  final String hint;
+  final bool obscure;
+  final IconData icon;
+  final controller;
+  InputFieldArea({this.hint, this.obscure, this.icon, this.controller});
+  @override
+  Widget build(BuildContext context) {
+    return (new Container(
+      decoration: new BoxDecoration(
+        border: new Border(
+          bottom: new BorderSide(
+            width: 0.5,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      child: new TextFormField(
+        controller: controller,
+        textAlign: TextAlign.center,
+        obscureText: obscure,
+        style: const TextStyle(
+          color: Color.fromRGBO(247, 64, 106, 1.0),
+        ),
+        decoration: new InputDecoration(
+          icon: new Icon(
+            icon,
+            color: Colors.white,
+          ),
+          border: InputBorder.none,
+          hintText: hint,
+          hintStyle: const TextStyle(color: Color.fromRGBO(247, 64, 106, 1.0), fontSize: 15.0),
+          contentPadding: const EdgeInsets.only(
+              top: 30.0, right: 30.0, bottom: 30.0, left: 5.0),
+        ),
+      ),
+    ));
+  }
+}
+
+import 'package:flutter/material.dart';
+
+class InputNumFieldArea extends StatelessWidget {
+  final String hint;
+  final bool obscure;
+  final IconData icon;
+  final controller;
+  final editEnd;
+  InputNumFieldArea({this.hint, this.obscure, this.editEnd, this.icon, this.controller});
+  @override
+  Widget build(BuildContext context) {
+    return (new Container(
+      decoration: new BoxDecoration(
+        border: new Border(
+          bottom: new BorderSide(
+            width: 0.5,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      child: new TextFormField(
+        onEditingComplete: editEnd,
+        controller: controller,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        obscureText: obscure,
+        style: const TextStyle(
+          color: Color.fromRGBO(247, 64, 106, 1.0),
+        ),
+        decoration: new InputDecoration(
+          icon: new Icon(
+            icon,
+            color: Colors.white,
+          ),
+          border: InputBorder.none,
+          hintText: hint,
+          hintStyle: const TextStyle(color: Color.fromRGBO(247, 64, 106, 1.0), fontSize: 15.0),
+          contentPadding: const EdgeInsets.only(
+              top: 30.0, right: 30.0, bottom: 30.0, left: 5.0),
+        ),
+      ),
+    ));
+  }
+}
+import 'package:flutter/material.dart';
+
+class MenuRoundButton extends StatelessWidget {
+  final Animation<double> buttonGrowAnimation;
+  MenuRoundButton({this.buttonGrowAnimation});
+  @override
+  Widget build(BuildContext context) {
+    return (new Container(
+      width: buttonGrowAnimation.value * 60,
+      height: buttonGrowAnimation.value * 60,
+      alignment: FractionalOffset.center,
+      decoration: new BoxDecoration(
+          color: const Color.fromRGBO(247, 64, 106, 1.0),
+          shape: BoxShape.circle),
+      child: new Icon(
+        Icons.menu,
+        size: buttonGrowAnimation.value * 40.0,
+        color: Colors.white,
+      ),
+    ));
+  }
+}
+
+import 'package:afriticapp/API_Access/PedidosControlador.dart';
+import 'package:afriticapp/Screens/Pedidos/data.dart';
+import 'package:flutter/material.dart';
+
+class PrototipoListaPedidos extends StatelessWidget {
+  PrototipoListaPedidos({this.pedido});
+  final Pedido pedido;
+
+  @override
+  Widget build(BuildContext context) {
+    return (new Container(
+      height: (MediaQuery.of(context).size.height/10),
+      width: (MediaQuery.of(context).size.height/10),
+      padding: EdgeInsets.all(5),
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          new Padding(
+            padding: EdgeInsets.only(left: 10,right: 10),
+            child:
+            InkWell(
+              onTap: ()
+              {
+                var ped = new PedidoContainer();
+                ped.pedido = pedido;
+                Navigator.pushNamed(context, "/desc_ped");
+              },
+            child: new Column(
+              children: <Widget>[
+                new Text(
+                "${pedido.Cliente}",
+                style: new TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w300,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+                new Text(
+                "${pedido.Fecha}",
+                style: new TextStyle(
+                    color: Colors.black45,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w300,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
+            ),
+            ) 
+            
+          ),
+          new IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: null,
+          ),
+          new IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: null,
+          ),
+        ],
+      )
+    ));
+  }
+}
+
+import 'package:afriticapp/API_Access/ProductosControlador.dart';
+import 'package:flutter/material.dart';
+import '../Screens/Productos/data.dart';
+
+class PrototipoListaProductos extends StatelessWidget {
+  PrototipoListaProductos({this.product});
+  final Product product;
+  @override
+  Widget build(BuildContext context) {
+    return (new Container(
+      height: (MediaQuery.of(context).size.height/10),
+      width: (MediaQuery.of(context).size.height/10),
+      padding: EdgeInsets.all(5),
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          InkWell(
+            child: new Container(
+              width: MediaQuery.of(context).size.height/10,
+              decoration: new BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image: NetworkImage(product.Img_url)
+                ),
+              ) 
+            ),
+            onTap: (){
+              var prod = new ProductoContainer();
+              prod.producto = product;
+              Navigator.pushNamed(context, "/desc_prod");
+            },
+          ),
+          new Padding(
+            padding: EdgeInsets.only(left: 10,right: 10),
+            child: new Column(
+            children: <Widget>[
+                new Text(
+                product.Nombre,
+                style: new TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w300,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+                new Text(
+                product.Precio.toString(),
+                style: new TextStyle(
+                    color: Colors.black45,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w300,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          new IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: (){
+
+            },
+          ),
+          new IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: null,
+          ),
+        ],
+      )
+    ));
+  }
+}
+
+import 'package:afriticapp/API_Access/ProductosControlador.dart';
+import 'package:flutter/material.dart';
+import 'InputNumFields.dart';
+import '../Screens/AgregarPedido/index.dart';
+
+class PrototipoProdPedido extends StatelessWidget {
+  PrototipoProdPedido({this.prod, this.cant});
+  final prod,cant;
+
+  @override
+  Widget build(BuildContext context) {
+    return (new Container(
+      height: (MediaQuery.of(context).size.height/10),
+      width: (MediaQuery.of(context).size.height/10),
+      padding: EdgeInsets.all(5),
+      child: Text("${prod.toString()} -> ${cant.toString()} unidades") 
+      ));
+  }
+}
+
+import 'package:flutter/material.dart';
+
+class SignIn extends StatelessWidget {
+  SignIn();
+  @override
+  Widget build(BuildContext context) {
+    return (new Container(
+      width: 320.0,
+      height: 60.0,
+      alignment: FractionalOffset.center,
+      decoration: new BoxDecoration(
+        color: const Color.fromRGBO(247, 64, 106, 1.0),
+        borderRadius: new BorderRadius.all(const Radius.circular(30.0)),
+      ),
+      child: new Text(
+        "Iniciar sesión",
+        style: new TextStyle(
+          color: Colors.white,
+          fontSize: 20.0,
+          fontWeight: FontWeight.w300,
+          letterSpacing: 0.3,
+        ),
+      ),
+    ));
+  }
+}
+
+import 'package:flutter/material.dart';
+
+class SignUp extends StatelessWidget {
+  SignUp({this.funcion});
+  final VoidCallback funcion;
+  @override
+  Widget build(BuildContext context) {
+    return (new FlatButton(
+      padding: const EdgeInsets.only(
+        top: 160.0,
+      ),
+      onPressed: funcion,
+      child: new Text(
+        "Recuperar contraseña",
+        textAlign: TextAlign.center,
+        overflow: TextOverflow.ellipsis,
+        softWrap: true,
+        style: new TextStyle(
+            fontWeight: FontWeight.w300,
+            letterSpacing: 0.5,
+            color: Colors.white,
+            fontSize: 12.0),
+      ),
+    ));
+  }
+}
+
+import 'package:flutter/material.dart';
+
+class Tick extends StatelessWidget {
+  final DecorationImage image;
+  Tick({this.image});
+  @override
+  Widget build(BuildContext context) {
+    return (new Container(
+      width: 250.0,
+      height: 250.0,
+      alignment: Alignment.center,
+      decoration: new BoxDecoration(
+        image: image,
+      ),
+    ));
+  }
+}
+
+import 'package:flutter/material.dart';
+import '../../Components/GenericButton.dart';
+
+
+class Administrar extends StatefulWidget
+{
+  const Administrar ({Key key}):super(key:key);
+
+  @override
+  AdministrarState createState() => new AdministrarState();
+}
+
+class AdministrarState extends State<Administrar> {
+
+  
+
+  Widget build(BuildContext context)
+  {
+    Size screenSize = MediaQuery.of(context).size;
+
+        GestureDetector bcrearuser = new GestureDetector(
+            child: 
+            GenericButton(
+              title: "Cuenta nueva",
+            ),
+            onTap: (){
+              //Navigator.pushNamed(context, "/pedidos");
+            },
+          );
+
+
+
+    AppBar appBar = new AppBar(
+      title: Text("Adminsitrar"),
+      backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+      actions: <Widget>[
+        
+      ],
+    );
+
+    AnimatedContainer administrar = AnimatedContainer(
+      duration: Duration(seconds: 10),
+      height: screenSize.height,
+      width: screenSize.width,
+      decoration: BoxDecoration(
+      gradient: new LinearGradient(
+        colors: <Color>[
+          const Color.fromRGBO(162, 146, 199, 0.8),
+          const Color.fromRGBO(51, 51, 63, 0.9),
+        ],
+        stops: [0.2, 1.0],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(0.0, 1.0),
+      )),  
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                child:bcrearuser ,
+                padding: EdgeInsets.all(15),
+              ),
+
+            ],            
+          )
+        ],
+      ),
+    );
+
+
+
+    List<Widget> _pages = <Widget>[
+      administrar,
+    ];
+
+    return (new WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        body:Center(
+          child: PageView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },       
+          ),
+        ),
+      ),
+    ));
+  }
+  
+}
+
+import 'dart:io';
+import 'package:afriticapp/API_Access/Controlador.dart';
+import 'package:afriticapp/API_Access/ProductosControlador.dart';
+import 'package:flutter/material.dart';
+import '../../Components/PrototipoProdPedido.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import '../../Components/InputFields.dart';
+import '../../Components/InputNumFields.dart';
+import '../../Components/GenericButton.dart';
+
+class AddOrder extends StatefulWidget
+{
+
+  const AddOrder  ({Key key}):super(key:key);
+
+  @override
+  AddOrderState createState() => new AddOrderState();
+}
+
+class AddOrderState extends State<AddOrder > {
+  
+  File image;
+  String filename;
+  List<int> prods = new List(),cants = new List();
+  var dropOptValEst = {
+            'Pendiente':'PE', 
+            'Entregado':'EN',
+            };
+  var dropOptEst = new List<DropdownMenuItem<String>>();
+  List<Product> dropOptValProd = new List<Product>();
+  var dropOptProd = new List<DropdownMenuItem<int>>();
+  void initState()
+  {
+    var c = Controlador();
+    c.Inventario().then((_)
+      {
+        dropOptValProd = c.ProductosC.Inventario;
+        setState(() {
+          dropOptValProd.map(
+            (prod)
+            {
+              dropOptProd.add(
+                new DropdownMenuItem<int>(
+                  value: prod.ProductID,
+                  child: Text(prod.Nombre),
+                )
+              );
+            }
+          );
+        });
+      }      
+    );
+    dropOptValEst.forEach((k,v) {
+          dropOptEst.add(DropdownMenuItem<String>(
+            value: v,
+            child: Text(k),
+            )
+          );
+        });
+
+  }
+  
+
+  final clienteController = new TextEditingController();
+  final prodController = new TextEditingController();
+  final cantController = new TextEditingController();
+  String tipoEstado;
+  int valorProd;
+  int precio = 0;
+
+  void add()
+  {
+    var c = Controlador();
+    Map<String,dynamic> p ={
+      "Cliente": clienteController.text,
+      "Tipo_Estado": tipoEstado,
+      "Precio_Total": precio,
+      "Productos":[],
+      "Usuario": c.UsuariosC.Logueado.UserID
+    };
+    List<Map<String,int>> prod = List<Map<String,int>>();
+    for (var i = 0; i < prods.length; i++) {
+      prod.add(
+        {"ProductID": prods[i]}
+      );
+    }
+    p["Productos"] = prod;
+
+    
+    c.Escribir(2, p);
+    
+  }
+
+  Future<Null> addProd(BuildContext context)
+  {
+    return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Añadir Producto'),
+              content: Column(
+                children: <Widget>[
+                  Flexible(
+                    child: TextField(
+                      decoration: InputDecoration(hintText: "ID Producto"),
+                      cursorColor: Color.fromRGBO(247, 64, 106, 1.0),
+                      controller: prodController,
+                    ),
+                  ),
+                  Flexible(
+                    child: TextField(
+                      decoration: InputDecoration(hintText: "Cantidad"),
+                      cursorColor: Color.fromRGBO(247, 64, 106, 1.0),
+                      controller: cantController,
+                    ),
+                  )                  
+                ],
+              ),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text('Enviar'),
+                  textColor:  Color.fromRGBO(247, 64, 106, 1.0),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                new FlatButton(
+                  child: new Text('Cancelar'),
+                  textColor:  Color.fromRGBO(247, 64, 106, 1.0),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          },
+        );
+  }
+
+  Future<Null> sumPrecio() async
+  {
+    var c = Controlador();
+    var cant = cants.last;
+    var response = await c.APIparametros(3, prods.last);
+    if(response is int)
+    {
+      print("error");
+    }
+    else{
+      precio += response['Precio']*cant;
+    }
+
+  }
+
+  Widget build(BuildContext context)
+  {
+    var screenSize = MediaQuery.of(context).size;
+
+        GestureDetector bsaveproduct = new GestureDetector(
+            child: 
+            GenericButton(
+              title: "guardar",
+            ),
+            onTap: (){
+              add();
+              Navigator.pop(context);
+            },
+        );
+        AppBar appBar = new AppBar(
+          title: Text("Nueva Orden"),
+          backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+          actions: <Widget>[
+          ],
+        );
+
+        InputFieldArea cliente = 
+            InputFieldArea(
+              hint: "Cliente",
+              obscure: false,
+              controller: clienteController,
+            );
+
+        DropdownButton estadoDrop = 
+          DropdownButton<String>(
+              value: tipoEstado,
+              style: const TextStyle(
+              color: Color.fromRGBO(247, 64, 106, 1.0),
+              ),                  
+              onChanged: (String newValue) {
+                setState(() {
+                  tipoEstado = newValue;
+                });
+              },
+              items: dropOptEst
+        );
+
+        List<PrototipoProdPedido> productos = List<PrototipoProdPedido>();
+
+        Container neworder = Container(
+          height: screenSize.height,
+          width: screenSize.width,
+          decoration: BoxDecoration(
+            gradient: new LinearGradient(
+              colors: <Color>[
+                const Color.fromRGBO(162, 146, 199, 0.8),
+                const Color.fromRGBO(51, 51, 63, 0.9),
+              ],
+              stops: [0.2, 1.0],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(0.0, 1.0),
+            )),  
+            child:
+              ListView(
+                children: <Widget>[
+                  Padding(
+                    child: cliente,
+                    padding: EdgeInsets.all(15),
+                  ),
+                  Padding(
+                    child: estadoDrop,
+                    padding: EdgeInsets.all(15),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(15),
+                    child: ListView.builder(
+                        itemBuilder: (BuildContext context,int index){
+                          return productos[index%productos.length];
+                        },
+                        itemCount: productos.length,
+                        shrinkWrap: true,
+                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Text(precio.toString()),
+                  ),
+                  Padding(
+                    child: bsaveproduct,
+                    padding: EdgeInsets.all(15),
+                  ),                  
+                ]
+              )
+        );
+
+      
+    
+
+      return (new WillPopScope(
+        onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        resizeToAvoidBottomPadding: false,
+        body:Stack(
+          children: <Widget>[
+            Center(
+              child:neworder,       
+              ),
+          ]
+          ), 
+      floatingActionButton: FloatingActionButton(
+        onPressed: ()
+        {
+          addProd(context).then(
+            (_)
+            {
+              prods.add(int.parse(prodController.text));
+              cants.add(int.parse(cantController.text));
+              productos.add(
+                PrototipoProdPedido(
+                  prod: prods[prods.length-1],
+                  cant: cants[prods.length-1],
+                )
+              );
+              sumPrecio();
+            }
+          );
+          setState(() {
+                
+          });
+        }
+      )
+    )
+    ));
+  }
+}
+
+import 'dart:io';
+
+import 'package:afriticapp/API_Access/Controlador.dart';
+import 'package:afriticapp/API_Access/ProductosControlador.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import '../../Components/InputFields.dart';
+import '../../Components/InputNumFields.dart';
+import '../../Components/GenericButton.dart';
+
+String dropdownValue = 'Pulsera';
+
+class AddProducto extends StatefulWidget
+{
+
+  const AddProducto ({Key key}):super(key:key);
+
+  @override
+  AddProductoState createState() => new AddProductoState();
+}
+
+class AddProductoState extends State<AddProducto> {
+
+  File image;
+  String filename;
+
+  final nombreController = new TextEditingController();
+  final descController = new TextEditingController();
+  final tipoController = new TextEditingController();
+  final precioController = new TextEditingController();
+  final cantController = new TextEditingController();
+  String dropValue;
+
+   Future _getImage() async{
+    var selectedImagen =await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+     image =selectedImagen;
+     filename =basename(image.path);
+    });
+  }
+
+  void add()
+  {
+    int precio = int.tryParse(precioController.text);
+    int cant = int.tryParse(cantController.text);
+    Map<String,dynamic> p ={
+      "Nombre": nombreController.text,
+      "Descripcion": descController.text,
+      "Img_url" : "nono",
+      "Tipo_Producto": dropValue,
+      "Precio": precio,
+      "Cantidad": cant
+    };
+
+    var c = Controlador();
+    c.Escribir(1, p);
+    
+  }
+
+  Widget build(BuildContext context)
+  {
+    var screenSize = MediaQuery.of(context).size;
+
+        GestureDetector bsaveproduct = new GestureDetector(
+            child: 
+            GenericButton(
+              title: "Añadir",
+            ),
+            onTap: (){
+              add();
+              Navigator.pop(context);
+            },
+          );
+
+           InputFieldArea nombre = 
+            InputFieldArea(
+              hint: "Nombre",
+              obscure: false,
+              controller: nombreController,
+            );
+ 
+            InputFieldArea descripcion = 
+            InputFieldArea(
+              hint: "Descripcion",
+              obscure: false,
+              controller: descController,
+            );
+
+            InputNumFieldArea precio = 
+            InputNumFieldArea(
+              hint: "Precio",
+              obscure: false,
+              controller: precioController,
+            );
+
+            InputNumFieldArea cantidad = 
+            InputNumFieldArea(
+              hint: "Cantidad",
+              obscure: false,
+              controller: cantController,
+            );
+
+            AppBar appBar = new AppBar(
+              title: Text("Nuevo Producto"),
+              backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+              actions: <Widget>[
+              ],
+            );
+
+            var dropOptVal = {
+                    'Pulsera':'PU', 
+                    'Collar':'CO',
+                    'Camisa':'CA',
+                    'Turbante':'TU',
+                    'Bufanda':'BU'};
+            var dropOpt = new List<DropdownMenuItem<String>>();
+
+            dropOptVal.forEach((k,v) {
+                      dropOpt.add(DropdownMenuItem<String>(
+                        value: v,
+                        child: Text(k),
+                        )
+                      );
+                    });
+
+            DropdownButton tipo_product = 
+              DropdownButton<String>(
+                  value: dropValue,
+                  style: const TextStyle(
+                  color: Color.fromRGBO(247, 64, 106, 1.0),
+                  ),                  
+                  onChanged: (String newValue) {
+                    setState(() {
+                      dropValue = newValue;
+                    });
+                  },
+                  items: dropOpt
+
+            );
+
+             AnimatedContainer newproduct = AnimatedContainer(
+                duration: Duration(seconds: 10),
+                decoration: BoxDecoration(
+                  gradient: new LinearGradient(
+                    colors: <Color>[
+                      const Color.fromRGBO(162, 146, 199, 0.8),
+                      const Color.fromRGBO(51, 51, 63, 0.9),
+                    ],
+                    stops: [0.2, 1.0],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(0.0, 1.0),
+                  )),  
+                  child: Stack(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                          padding: EdgeInsets.all(15),
+                          child: new GestureDetector(
+                          onTap: (){
+                          _getImage();
+                              },
+                              child: new Container(
+                                width: 190.0,
+                                height: 190.0,
+                                decoration: new BoxDecoration(
+                                border: new Border.all(
+                                  color: Colors.blue,
+                                  width: 1.5,
+                                ),
+                                shape: BoxShape.circle,
+                                image: new DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: new NetworkImage(
+                                      "https://www.freeiconspng.com/uploads/no-image-icon-32.png"
+                                          )
+                                        )
+                                    )),
+                                  ),
+                          ),
+                          Padding(
+                            child: nombre,
+                            padding: EdgeInsets.all(15),
+                          ),
+                          Padding(
+                            child: descripcion,
+                            padding: EdgeInsets.all(15),
+                          ),
+                           Padding(
+                            child: tipo_product,
+                            padding: EdgeInsets.all(15),
+                          ),
+                          Padding(
+                            child: precio,
+                            padding: EdgeInsets.all(15),
+                          ),                   
+                          Padding(
+                            child: cantidad,     
+                            padding: EdgeInsets.all(15),
+                          ),
+                          Padding(
+                            child: bsaveproduct,
+                            padding: EdgeInsets.all(15),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+             );
+
+       
+
+    List<Widget> _pages = <Widget>[
+      newproduct,
+    ];
+    
+
+        return (new WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        resizeToAvoidBottomPadding: false,
+        body:Stack(
+          children: <Widget>[
+            Center(
+              child: ListView.builder(
+              itemCount: 1,
+              itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },       
+          ),
+        ),
+
+          ],
+        )
+
+      ),
+    ));
+  }  
+}
+
+import 'package:flutter/material.dart';
+import 'package:afriticapp/Screens/Pedidos/data.dart';
+import '../../Components/GenericButton.dart';
+import '../../Components/InputFields.dart';
+
+
+class Changepass extends StatefulWidget
+{
+  const Changepass ({Key key}):super(key:key);
+
+  @override
+  ChangepassState createState() => new ChangepassState();
+}
+
+class ChangepassState extends State<Changepass> {
+
+  
+
+  Widget build(BuildContext context)
+  {
+    Size screenSize = MediaQuery.of(context).size;
+
+        GestureDetector bchangepass = new GestureDetector(
+            child: 
+            GenericButton(
+              title: "Cambiar Contraseña",
+            ),
+            onTap: (){
+              //Navigator.pushNamed(context, "/pedidos");
+            },
+          );
+
+
+        
+            InputFieldArea oldpass = 
+            InputFieldArea(
+              hint: "Contraseña actual",
+              obscure: true,
+            );
+    
+
+          InputFieldArea newpass =  
+            InputFieldArea(
+              hint: "Nueva contraseña",
+              obscure: true,
+          );
+          InputFieldArea confirmpass =  
+            InputFieldArea(
+              hint: "Confirme nueva contraseña",
+              obscure: true,
+            );
+
+
+
+    AppBar appBar = new AppBar(
+      title: Text("Cambiar Contraseña"),
+      backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+      actions: <Widget>[
+      ],
+    );
+
+    AnimatedContainer resetpass = AnimatedContainer(
+      duration: Duration(seconds: 10),
+      //height: screenSize.height,
+      //width: screenSize.width,
+      decoration: BoxDecoration(
+      gradient: new LinearGradient(
+        colors: <Color>[
+          const Color.fromRGBO(162, 146, 199, 0.8),
+          const Color.fromRGBO(51, 51, 63, 0.9),
+        ],
+        stops: [0.2, 1.0],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(0.0, 1.0),
+      )),  
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                child: oldpass,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: newpass,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: confirmpass,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child:bchangepass ,
+                padding: EdgeInsets.all(15),
+              )
+            ],            
+          ),
+
+        ],
+      ),
+    );
+
+
+
+    List<Widget> _pages = <Widget>[
+      resetpass,
+    ];
+
+    return (new WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        resizeToAvoidBottomPadding: false,
+        body:Stack(
+          children: <Widget>[
+            Center(
+              child: PageView.builder(
+              itemCount: 1,
+              itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },       
+          ),
+        ),
+
+          ],
+        )
+
+      ),
+    ));
+  }
+  
+}
+
+import 'package:flutter/material.dart';
+import '../../Components/GenericButton.dart';
+
+
+class Estadisticas extends StatefulWidget
+{
+  const Estadisticas ({Key key}):super(key:key);
+
+  @override
+  EstadisticasState createState() => new EstadisticasState();
+}
+
+class EstadisticasState extends State<Estadisticas> {
+
+  
+
+  Widget build(BuildContext context)
+  {
+    Size screenSize = MediaQuery.of(context).size;
+
+        GestureDetector bestadisticas = new GestureDetector(
+            child: 
+            GenericButton(
+              title: "No implementado",
+            ),
+            onTap: (){
+              //Navigator.pushNamed(context, "/pedidos");
+            },
+          );
+
+
+
+    AppBar appBar = new AppBar(
+      title: Text("Estadisticas"),
+      backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+      actions: <Widget>[
+        
+      ],
+    );
+
+    AnimatedContainer estadisticas = AnimatedContainer(
+      duration: Duration(seconds: 10),
+      height: screenSize.height,
+      width: screenSize.width,
+      decoration: BoxDecoration(
+      gradient: new LinearGradient(
+        colors: <Color>[
+          const Color.fromRGBO(162, 146, 199, 0.8),
+          const Color.fromRGBO(51, 51, 63, 0.9),
+        ],
+        stops: [0.2, 1.0],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(0.0, 1.0),
+      )),  
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                child:bestadisticas ,
+                padding: EdgeInsets.all(15),
+              ),
+
+            ],            
+          )
+        ],
+      ),
+    );
+
+
+
+    List<Widget> _pages = <Widget>[
+      estadisticas,
+    ];
+
+    return (new WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        body:Center(
+          child: PageView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },       
+          ),
+        ),
+      ),
+    ));
+  }
+  
+}
+
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' show timeDilation;
+
+class StaggerAnimation extends StatelessWidget {
+  StaggerAnimation({Key key, this.buttonController})
+      : buttonZoomOutAnimation = new Tween(
+          begin: 60.0,
+          end: 1000.0,
+        )
+            .animate(
+          new CurvedAnimation(parent: buttonController, curve: Curves.easeOut),
+        ),
+        buttonBottomtoCenterAnimation = new AlignmentTween(
+          begin: Alignment.bottomRight,
+          end: Alignment.center,
+        )
+            .animate(
+          new CurvedAnimation(
+            parent: buttonController,
+            curve: new Interval(
+              0.0,
+              0.200,
+              curve: Curves.easeOut,
+            ),
+          ),
+        ),
+        super(key: key);
+
+  final Animation<double> buttonController;
+  final Animation buttonZoomOutAnimation;
+  final Animation<Alignment> buttonBottomtoCenterAnimation;
+
+  Widget _buildAnimation(BuildContext context, Widget child) {
+    timeDilation = 0.4;
+
+    return (new Padding(
+        padding: buttonZoomOutAnimation.value < 400
+            ? new EdgeInsets.all(20.0)
+            : new EdgeInsets.all(0.0),
+        child: new Container(
+            alignment: buttonBottomtoCenterAnimation.value,
+            child: new InkWell(
+              child: new Container(
+                width: buttonZoomOutAnimation.value,
+                height: buttonZoomOutAnimation.value,
+                alignment: buttonBottomtoCenterAnimation.value,
+                decoration: new BoxDecoration(
+                    color: const Color.fromRGBO(247, 64, 106, 1.0),
+                    shape: buttonZoomOutAnimation.value < 400
+                        ? BoxShape.circle
+                        : BoxShape.rectangle),
+                child: new Icon(
+                  Icons.add,
+                  size: buttonZoomOutAnimation.value < 50
+                      ? buttonZoomOutAnimation.value
+                      : 0.0,
+                  color: Colors.white,
+                ),
+              ),
+            ))));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    buttonController.addListener(() {
+      // if (controller.isCompleted) Navigator.pushNamed(context, "/login");    //options
+      // if (controller.isCompleted) Navigator.of(context).pop();       //options
+      if (buttonController.isCompleted) {
+        Navigator.pushReplacementNamed(context, "/login");
+      }
+    });
+    return new AnimatedBuilder(
+      builder: _buildAnimation,
+      animation: buttonController,
+    );
+  }
+}
+
+import 'dart:io';
+import 'package:afriticapp/API_Access/Controlador.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/animation.dart';
+import 'dart:async';
+import '../../Components/GenericButton.dart';
+import '../../Components/MenuRoundButton.dart';
+import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key key}) : super(key: key);
+
+  @override
+  HomeScreenState createState() => new HomeScreenState();
+}
+
+
+class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  Animation<double> containerGrowAnimation;
+  AnimationController _screenController;
+  AnimationController _buttonController;
+  Animation<double> buttonGrowAnimation;
+  Animation<double> listTileWidth;
+  Animation<Alignment> listSlideAnimation;
+  Animation<Alignment> buttonSwingAnimation;
+  Animation<EdgeInsets> listSlidePosition;
+  Animation<Color> fadeScreenAnimation;
+  File image;
+  String filename;
+  var animateStatus = 0;
+  bool flagadmin = false;
+
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    _screenController = new AnimationController(
+        duration: new Duration(milliseconds: 2000), vsync: this);
+    _buttonController = new AnimationController(
+        duration: new Duration(milliseconds: 1500), vsync: this);
+
+    fadeScreenAnimation = new ColorTween(
+      begin: const Color.fromRGBO(247, 64, 106, 1.0),
+      end: const Color.fromRGBO(247, 64, 106, 0.0),
+    )
+        .animate(
+      new CurvedAnimation(
+        parent: _screenController,
+        curve: Curves.ease,
+      ),
+    );
+    containerGrowAnimation = new CurvedAnimation(
+      parent: _screenController,
+      curve: Curves.easeIn,
+    );
+
+    buttonGrowAnimation = new CurvedAnimation(
+      parent: _screenController,
+      curve: Curves.easeOut,
+    );
+    containerGrowAnimation.addListener(() {
+      this.setState(() {});
+    });
+    containerGrowAnimation.addStatusListener((AnimationStatus status) {});
+
+    listTileWidth = new Tween<double>(
+      begin: 1000.0,
+      end: 600.0,
+    )
+        .animate(
+      new CurvedAnimation(
+        parent: _screenController,
+        curve: new Interval(
+          0.225,
+          0.600,
+          curve: Curves.bounceIn,
+        ),
+      ),
+    );
+
+    listSlideAnimation = new AlignmentTween(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    )
+        .animate(
+      new CurvedAnimation(
+        parent: _screenController,
+        curve: new Interval(
+          0.325,
+          0.700,
+          curve: Curves.ease,
+        ),
+      ),
+    );
+    buttonSwingAnimation = new AlignmentTween(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomRight,
+    )
+        .animate(
+      new CurvedAnimation(
+        parent: _screenController,
+        curve: new Interval(
+          0.225,
+          0.600,
+          curve: Curves.ease,
+        ),
+      ),
+    );
+    listSlidePosition = new EdgeInsetsTween(
+      begin: const EdgeInsets.only(bottom: 16.0),
+      end: const EdgeInsets.only(bottom: 80.0),
+    )
+        .animate(
+      new CurvedAnimation(
+        parent: _screenController,
+        curve: new Interval(
+          0.325,
+          0.800,
+          curve: Curves.ease,
+        ),
+      ),
+    );
+    _screenController.forward();
+    //init
+    var c = Controlador();
+    flagadmin = c.UsuariosC.Logueado.Tipo_Cuenta == "A";
+
+  }
+
+  @override
+  void dispose() {
+    _screenController.dispose();
+    _buttonController.dispose();
+    super.dispose();
+  }
+
+  Future<Null> _playAnimation() async {
+    try {
+      await _buttonController.forward();
+    } on TickerCanceled {}
+  }
+
+  Future _getImage() async{
+    var selectedImagen =await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+     image =selectedImagen;
+     filename =basename(image.path); 
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    timeDilation = 0.3;
+    Size screenSize = MediaQuery.of(context).size;
+
+    var c = Controlador();
+
+    final _controller = new PageController();
+
+    GestureDetector bMenu = new GestureDetector(
+      child: MenuRoundButton(buttonGrowAnimation: buttonGrowAnimation),
+      onTap: () {setState(() {
+              _controller.jumpToPage(1);
+            });
+            },
+    );
+
+    GestureDetector bProd = new GestureDetector(
+              child: 
+              GenericButton(
+                title: "Productos",
+              ),
+              onTap: (){
+                Navigator.pushNamed(context, "/productos");
+              } ,
+          );
+
+    GestureDetector bPedidos = new GestureDetector(
+            child: 
+            GenericButton(
+              title: "Pedidos",
+            ),
+            onTap: (){
+              Navigator.pushNamed(context, "/pedidos");
+            },
+          );
+
+    
+    GestureDetector bCambiarContrasena = new GestureDetector(
+      child: GenericButton(
+        title: "Cambiar contraseña",
+      ),
+      onTap: () {
+        Navigator.pushNamed(context, "/changepass");
+      },
+    );
+
+    GestureDetector bEstadisticas = new GestureDetector(
+      child: GenericButton(
+        title: "Estadistica",
+      ),
+      onTap: () {
+        Navigator.pushNamed(context, "/estadisticas");
+      },
+    );
+
+    GestureDetector bAdmisnitrar = new GestureDetector(
+      child: GenericButton(
+        title: "Administrar",
+      ),
+      onTap: () {
+        Navigator.pushNamed(context, "/administrar");
+      },
+    );
+
+      GestureDetector bSalir = new GestureDetector(
+      child: GenericButton(
+        title: "Salir",
+      ),
+      onTap: () {
+        setState(() {
+          Navigator.pop(context);
+        });
+      },
+    );
+
+    List<Widget> botonesmenuadm = <Widget>[
+              Padding(
+                child:bCambiarContrasena ,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: bEstadisticas,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: bAdmisnitrar,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: bSalir,
+                padding: EdgeInsets.all(15),
+              ),
+            ];
+
+        List<Widget> botonesmenu = <Widget>[
+              Padding(
+                child:bCambiarContrasena ,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: bEstadisticas,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: bSalir,
+                padding: EdgeInsets.all(15),
+              ),
+            ];
+
+
+    AnimatedContainer mainPage = new AnimatedContainer(
+      duration: Duration(seconds: 10),
+      height: screenSize.height,
+      width: screenSize.width,
+      decoration: BoxDecoration(
+      gradient: new LinearGradient(
+        colors: <Color>[
+          const Color.fromRGBO(162, 146, 199, 0.8),
+          const Color.fromRGBO(51, 51, 63, 0.9),
+        ],
+        stops: [0.2, 1.0],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(0.0, 1.0),
+      )),  
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                child:bProd ,
+                padding: EdgeInsets.all(15),
+              ),
+
+              Padding(
+                child: bPedidos,
+                padding: EdgeInsets.all(15),
+              ),
+            ],
+
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image(
+                image: AssetImage("assets/name.png"),
+              )
+            ],
+
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children:<Widget>[
+              Container(
+                alignment: AlignmentDirectional.bottomEnd,
+                padding: EdgeInsets.all(15),
+                child: bMenu,
+              )
+            ] ,
+          ),
+        ]
+      )
+    );
+
+    var nombre = "${c.UsuariosC.Logueado.Nombre} ${c.UsuariosC.Logueado.Apellido}";
+
+    AnimatedContainer menuPage = AnimatedContainer(
+        duration: Duration(seconds: 10),
+        height: screenSize.height,
+        width: screenSize.width,
+        child: Column(
+          children: <Widget>[
+            Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+                  new GestureDetector(
+                      onTap: (){
+                        _getImage();
+                      },
+                      child: new Container(
+                        width: 190.0,
+                        height: 190.0,
+                        decoration: new BoxDecoration(
+                          border: new Border.all(
+                             color: Colors.blue,
+                             width: 1.5,
+                          ),
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                            fit: BoxFit.fill,
+                            image: new NetworkImage(
+                              c.UsuariosC.Logueado.Img_url
+                                )
+                        )
+                    )),
+                  ),
+                    
+                new Text(nombre,
+                    textScaleFactor: 1.5)
+              ],
+            ),
+            Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: flagadmin? botonesmenuadm:botonesmenu
+            ),
+          ],
+        ),
+      );
+
+    
+
+    List<Widget> _pages = <Widget>[
+      mainPage,
+      menuPage,
+    ];
+
+    return (new WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: new Scaffold(
+        appBar: AppBar(
+          title: Text("Inicio"),
+          centerTitle: true,
+          backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+          leading: new Container(),
+          
+
+        ),        
+        body: Center(
+          child:PageView.builder(
+            controller: _controller,
+            scrollDirection: Axis.vertical,
+            itemCount: 2,
+            itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },
+                ),
+              )
+      ),
+    ));
+  }
+}
+
+import 'package:flutter/material.dart';
+
+DecorationImage backgroundImage = new DecorationImage(
+  image: new ExactAssetImage('assets/name.png'),
+  fit: BoxFit.cover,
+);
+
+DecorationImage profileImage = new DecorationImage(
+  image: new ExactAssetImage('assets/avatars/default-avatar.jpg'),
+  fit: BoxFit.cover,
+);
+
+DecorationImage timelineImage = new DecorationImage(
+  image: new ExactAssetImage('assets/timeline.jpg'),
+  fit: BoxFit.cover,
+);
+DecorationImage avatar1 = new DecorationImage(
+  image: new ExactAssetImage('assets/avatars/avatar-1.jpg'),
+  fit: BoxFit.cover,
+);
+DecorationImage avatar2 = new DecorationImage(
+  image: new ExactAssetImage('assets/avatars/avatar-2.jpg'),
+  fit: BoxFit.cover,
+);
+DecorationImage avatar3 = new DecorationImage(
+  image: new ExactAssetImage('assets/avatars/avatar-3.jpg'),
+  fit: BoxFit.cover,
+);
+DecorationImage avatar4 = new DecorationImage(
+  image: new ExactAssetImage('assets/avatars/avatar-4.jpg'),
+  fit: BoxFit.cover,
+);
+DecorationImage avatar5 = new DecorationImage(
+  image: new ExactAssetImage('assets/avatars/avatar-5.jpg'),
+  fit: BoxFit.cover,
+);
+DecorationImage avatar6 = new DecorationImage(
+  image: new ExactAssetImage('assets/avatars/avatar-6.jpg'),
+  fit: BoxFit.cover,
+);
+
+// DecorationImage profileImage = new DecorationImage(
+//   image: new ExactAssetImage('assets/avatars/avatar-7.gif'),
+//   fit: BoxFit.cover,
+// );
+
+import 'dart:io';
+
+import 'package:afriticapp/API_Access/Controlador.dart';
+import 'package:afriticapp/API_Access/UsuariosControlador.dart';
+import 'package:flutter/material.dart';
+import 'styles.dart';
+import 'loginAnimation.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/animation.dart';
+import 'dart:async';
+import '../../Components/SignUpLink.dart';
+import '../../Components/Form.dart';
+import '../../Components/SignInButton.dart';
+import '../../Components/WhiteTick.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/scheduler.dart' show timeDilation;
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key key}) : super(key: key);
+  @override
+  LoginScreenState createState() => new LoginScreenState();
+}
+
+class LoginScreenState extends State<LoginScreen>
+    with TickerProviderStateMixin {
+  AnimationController _loginButtonController;
+  var animationStatus = 0;
+  List <User> listaUsuarios;
+  var correoController = TextEditingController();
+  var passController = TextEditingController();
+
+
+  
+  @override
+  void initState() {
+    super.initState();
+    _loginButtonController = new AnimationController(
+        duration: new Duration(milliseconds: 3000), vsync: this);
+    estado = -3;
+  }
+
+  @override
+  void dispose() {
+    _loginButtonController.dispose();
+    correoController.dispose();
+    passController.dispose();
+    super.dispose();
+  }
+  
+
+  Future<Null> _playAnimation() async {
+    try {
+      await _loginButtonController.forward();
+      await _loginButtonController.reverse();
+    } on TickerCanceled {}
+  }
+
+  Future<bool> _onWillPop() {
+    return showDialog(
+          context: context,
+          child: new AlertDialog(
+            title: new Text('¿Esta seguro?'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('No'),
+              ),
+              new FlatButton(
+                onPressed: () =>
+                    exit(0),
+                child: new Text('Si'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
+
+   Future<bool> _forgotPass() {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Recuperar contraseña'),
+            content: TextField(
+              decoration: InputDecoration(hintText: "Correo"),
+              cursorColor: Color.fromRGBO(247, 64, 106, 1.0),
+            ),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text('Enviar'),
+                textColor:  Color.fromRGBO(247, 64, 106, 1.0),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              new FlatButton(
+                child: new Text('Cancelar'),
+                textColor:  Color.fromRGBO(247, 64, 106, 1.0),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  int estado = -3;
+
+  Future<int> logIn(correo,pass) async
+  {
+    var c = new Controlador();
+    await c.Login(correo, pass);
+    return c.UsuariosC.estadoLogin;    
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    timeDilation = 0.4;
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);    
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_){
+        if(estado == 0)
+        {
+          _playAnimation();
+        }
+      }
+    );
+
+    InkWell boton1 = new InkWell
+    (
+      onTap: () {
+        var c = Controlador();
+        setState(() {
+          estado = c.UsuariosC.estadoLogin;
+        });
+      },
+      child: new SignIn());
+
+    StaggerAnimation butAnim = new StaggerAnimation
+    (
+      buttonController:
+          _loginButtonController.view,
+          function: _playAnimation,
+          correo: correoController.text,
+          pass: passController.text,
+    );
+
+    return (new WillPopScope(
+        onWillPop: _onWillPop,
+        child: new Scaffold(
+          body: new Container(
+              child: new Container(
+                  decoration: new BoxDecoration(
+                      gradient: new LinearGradient(
+                    colors: <Color>[
+                      const Color.fromRGBO(162, 146, 199, 0.8),
+                      const Color.fromRGBO(51, 51, 63, 0.9),
+                    ],
+                    stops: [0.2, 1.0],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(0.0, 1.0),
+                  )),
+                  child: new ListView(
+                    padding: const EdgeInsets.all(0.0),
+                    children: <Widget>[
+                      new Stack(
+                        alignment: AlignmentDirectional.bottomCenter,
+                        children: <Widget>[
+                          new Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  top: MediaQuery.of(context).size.height/10,
+                                ),
+                                child: new Tick(image: tick),
+                              ),              
+                              new FormContainer(
+                                correoController: correoController,
+                                passController: passController,
+                              ),
+                              new SignUp(
+                                funcion: _forgotPass,
+                              )
+                            ],
+                          ), 
+                          FutureBuilder(
+                            future: logIn(correoController.text, passController.text),
+                            builder: (_,op)
+                            {
+                              if(op.connectionState == ConnectionState.done)
+                              {
+                                if(op.data < 0)
+                                {
+                                  return new Padding(
+                                  padding: const EdgeInsets.only(bottom: 30.0),
+                                  child: boton1                                      
+                                  );
+                                }
+                                else
+                                {
+                                  return butAnim;
+                                }
+                              }
+                              else
+                              {
+                                return new Padding(
+                                  padding: const EdgeInsets.only(bottom: 30.0),
+                                  child: boton1                                      
+                                  );
+                              }
+                            },
+                          )
+                        ],
+                      ),
+                    ],
+                  ))),
+        )));
+  }
+}
+
+import 'package:flutter/material.dart';
+import 'dart:async';
+
+class StaggerAnimation extends StatelessWidget {
+  final Future Function() function;
+  final correo, pass;
+  StaggerAnimation({Key key, this.buttonController, 
+  this.function, this.correo, this.pass })
+      : buttonSqueezeanimation = new Tween(
+          begin: 320.0,
+          end: 70.0,
+        )
+            .animate(
+          new CurvedAnimation(
+            parent: buttonController,
+            curve: new Interval(
+              0.0,
+              0.150,
+            ),
+          ),
+        ),
+        buttomZoomOut = new Tween(
+          begin: 70.0,
+          end: 1000.0,
+        )
+            .animate(
+          new CurvedAnimation(
+            parent: buttonController,
+            curve: new Interval(
+              0.550,
+              0.999,
+              curve: Curves.bounceOut,
+            ),
+          ),
+        ),
+        containerCircleAnimation = new EdgeInsetsTween(
+          begin: const EdgeInsets.only(bottom: 50.0),
+          end: const EdgeInsets.only(bottom: 0.0),
+        )
+            .animate(
+          new CurvedAnimation(
+            parent: buttonController,
+            curve: new Interval(
+              0.500,
+              0.800,
+              curve: Curves.ease,
+            ),
+          ),
+        ),
+        super(key: key);
+
+  final AnimationController buttonController;
+  final Animation<EdgeInsets> containerCircleAnimation;
+  final Animation buttonSqueezeanimation;
+  final Animation buttomZoomOut;
+
+  Future<Null> _playAnimation() async {
+    try {
+      await buttonController.forward();
+      await buttonController.reverse();
+    } on TickerCanceled {}
+  }
+
+  Widget _buildAnimation(BuildContext context, Widget child) {
+    return new Padding(
+      padding: buttomZoomOut.value == 70
+          ? const EdgeInsets.only(bottom: 50.0)
+          : containerCircleAnimation.value,
+      child: new InkWell(
+          onTap: () {
+            function();
+          },
+          child: new Hero(
+            tag: "fade",
+            child: buttomZoomOut.value <= 300
+                ? new Container(
+                    width: buttomZoomOut.value == 70
+                        ? buttonSqueezeanimation.value
+                        : buttomZoomOut.value,
+                    height:
+                        buttomZoomOut.value == 70 ? 60.0 : buttomZoomOut.value,
+                    alignment: FractionalOffset.center,
+                    decoration: new BoxDecoration(
+                      color: const Color.fromRGBO(247, 64, 106, 1.0),
+                      borderRadius: buttomZoomOut.value < 400
+                          ? new BorderRadius.all(const Radius.circular(30.0))
+                          : new BorderRadius.all(const Radius.circular(0.0)),
+                    ),
+                    child: buttonSqueezeanimation.value > 75.0
+                        ? new Text(
+                            "Reanudar Sesion",
+                            style: new TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w300,
+                              letterSpacing: 0.3,
+                            ),
+                          )
+                        : buttomZoomOut.value < 300.0
+                            ? new CircularProgressIndicator(
+                                value: null,
+                                strokeWidth: 1.0,
+                                valueColor: new AlwaysStoppedAnimation<Color>(
+                                    Colors.white),
+                              )
+                            : null)
+                : new Container(
+                    width: buttomZoomOut.value,
+                    height: buttomZoomOut.value,
+                    decoration: new BoxDecoration(
+                      shape: buttomZoomOut.value < 500
+                          ? BoxShape.circle
+                          : BoxShape.rectangle,
+                      color: const Color.fromRGBO(247, 64, 106, 1.0),
+                    ),
+                  ),
+          )),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    buttonController.addListener(() {
+      if (buttonController.isCompleted) {
+        Navigator.pushNamed(context, "/home");
+      }
+    });
+    return new AnimatedBuilder(
+      builder: _buildAnimation,
+      animation: buttonController,
+    );
+  }
+}
+
+import 'package:flutter/material.dart';
+
+DecorationImage backgroundImage = new DecorationImage(
+  image: new ExactAssetImage('assets/login.png'),
+  fit: BoxFit.fitWidth,
+);
+
+DecorationImage tick = new DecorationImage(
+  image: new ExactAssetImage('assets/tick.png'),
+  fit: BoxFit.fitHeight,
+  
+);
+
+import 'package:flutter/material.dart';
+import '../../Components/GenericButton.dart';
+import '../../API_Access/Controlador.dart';
+import '../Pedidos/data.dart';
+
+
+class DetallePedido extends StatefulWidget
+{
+  const DetallePedido ({Key key}):super(key:key);
+
+  @override
+  DetallePedidoState createState() => new DetallePedidoState();
+}
+
+class DetallePedidoState extends State<DetallePedido> {
+
+  
+
+  Widget build(BuildContext context)
+  {
+    Size screenSize = MediaQuery.of(context).size;
+    //pedido del dto
+    var pedido = PedidoContainer.instance.pedido;
+
+    AppBar appBar = new AppBar(
+      title: Text("${pedido.Cliente} ${pedido.Fecha}"),
+      backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+      actions: <Widget>[
+        
+      ],
+    );
+
+
+    var fields = <Widget>[
+      Padding(
+        child: Text("Precio: ${pedido.Precio_Total}"),
+        padding: EdgeInsets.all(15),
+      ),
+      Padding(
+        child: Text("Estado: ${pedido.Tipo_Estado}"),
+        padding: EdgeInsets.all(15),
+      ),
+    ];
+
+    Container administrar = Container(
+      height: screenSize.height,
+      width: screenSize.width,
+      decoration: BoxDecoration(
+      gradient: new LinearGradient(
+        colors: <Color>[
+          const Color.fromRGBO(162, 146, 199, 0.8),
+          const Color.fromRGBO(51, 51, 63, 0.9),
+        ],
+        stops: [0.2, 1.0],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(0.0, 1.0),
+      )),  
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: fields            
+          )
+        ],
+      ),
+    );
+
+
+
+    List<Widget> _pages = <Widget>[
+      administrar,
+    ];
+
+    return (new WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        body:Center(
+          child: PageView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },       
+          ),
+        ),
+      ),
+    ));
+  }
+  
+}
+
+import 'package:afriticapp/API_Access/PedidosControlador.dart';
+import 'package:flutter/material.dart';
+import 'package:afriticapp/API_Access/Controlador.dart';
+
+class RowPedidoBuilder
+{
+  List<Pedido> listaPedidos = new List<Pedido>();
+  Controlador c;
+
+  Future<void> cargarDatos() async
+  {
+    c = new Controlador();
+    await c.Pedidos();
+    listaPedidos = c.PedidosC.ListaPedidos;
+  }
+
+  RowPedidoBuilder()
+  {
+    
+  }
+}
+
+class PedidoContainer 
+{
+  static final PedidoContainer instance = new PedidoContainer._internal();
+
+  Pedido pedido;
+
+  PedidoContainer._internal(){
+
+  }
+
+  factory PedidoContainer()
+  {
+    return instance;
+  }
+}
+
+import 'package:flutter/material.dart';
+import '../../Components/PrototipoListaPedidos.dart';
+import 'package:afriticapp/Screens/Pedidos/data.dart';
+
+
+class Pedidos extends StatefulWidget
+{
+  const Pedidos ({Key key}):super(key:key);
+
+  @override
+  PedidosState createState() => new PedidosState();
+}
+
+class PedidosState extends State<Pedidos> {
+
+  RowPedidoBuilder pedidos = new RowPedidoBuilder();
+
+  void initState()
+  {
+    
+  }
+
+  List construirLista()
+  {
+    return pedidos.listaPedidos.map(
+      (pedido) => (PrototipoListaPedidos(
+        pedido: pedido,
+        )
+      )
+    ).toList();
+  }
+
+  Widget build(BuildContext context)
+  {
+    AppBar appBar = new AppBar(
+      title: Text("Pedidos"),
+      backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () {
+
+          },
+          icon: new Icon(Icons.search),
+          alignment: AlignmentDirectional.centerEnd,
+        ),
+        IconButton(
+          onPressed: (){
+
+          },
+          icon: Icon(Icons.menu),
+        )
+      ],
+    );
+    var screenSize = MediaQuery.of(context).size;
+
+AnimatedContainer pedidosconteiner = AnimatedContainer(
+  duration: Duration(seconds: 10),
+      height: screenSize.height,
+      width: screenSize.width,
+      decoration: BoxDecoration(
+      gradient: new LinearGradient(
+        colors: <Color>[
+          const Color.fromRGBO(162, 146, 199, 0.8),
+          const Color.fromRGBO(51, 51, 63, 0.9),
+        ],
+        stops: [0.2, 1.0],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(0.0, 1.0),
+      )),  
+      child:
+      FutureBuilder(
+        future: pedidos.cargarDatos(),
+              builder: (_,op) {
+                if(op.connectionState == ConnectionState.done)
+                {
+                  var _items = construirLista();
+                  var lista = ListView.builder(
+                    padding: EdgeInsets.all(5),
+                    itemCount: _items.length,
+                    itemBuilder: (BuildContext context,int index){
+                      return _items[index%_items.length];
+                    });
+                  return RefreshIndicator(
+                    child: lista,
+                    onRefresh: (){
+                      setState(() {
+                        
+                      });
+                    },
+                  );
+                }
+                else
+                {
+                  return CircularProgressIndicator();
+                }
+              },
+      )
+       
+);
+    
+
+    List<Widget> _pages = <Widget>[
+      pedidosconteiner,
+    ];
+
+      return (new WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        body:Center(
+          child: PageView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },       
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+        backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+        onPressed: ()
+          {
+            Navigator.pushNamed(context, "/add_ped");
+          },
+        child: Icon(
+          
+          Icons.add,
+        ),
+      )
+      ),
+    ));
+
+  }
+  
+}
+
+import 'package:flutter/material.dart';
+import '../../Components/GenericButton.dart';
+import '../../API_Access/Controlador.dart';
+import '../Productos/data.dart';
+
+
+class DetalleProducto extends StatefulWidget
+{
+  const DetalleProducto ({Key key}):super(key:key);
+
+  @override
+  DetalleProductoState createState() => new DetalleProductoState();
+}
+
+class DetalleProductoState extends State<DetalleProducto> {
+
+  
+
+  Widget build(BuildContext context)
+  {
+    Size screenSize = MediaQuery.of(context).size;
+    //producto del dto
+    var prod = ProductoContainer.instance.producto;
+
+    AppBar appBar = new AppBar(
+      title: Text("${prod.ProductID} ${prod.Nombre}"),
+      backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+      actions: <Widget>[
+        
+      ],
+    );
+
+    // id,estado,nombre,descripcion,imagen,tipo,precio,cantidad
+
+    var fields = <Widget>[
+      Padding(
+        child: Container(
+          height: screenSize.height/5,
+          width: screenSize.width/5,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(prod.Img_url)
+            ),
+            shape: BoxShape.circle,
+          ),
+        ),
+        padding: EdgeInsets.all(15),
+      ),
+      Padding(
+        child: Text("Descripcion: ${prod.Descripcion}"),
+        padding: EdgeInsets.all(15),
+      ),
+      Padding(
+        child: Text("Precio: ${prod.Precio.toString()}"),
+        padding: EdgeInsets.all(15),
+      ),
+      Padding(
+        child: Text("Cantidad disponible: ${prod.Cantidad}"),
+        padding: EdgeInsets.all(15),
+      ),
+      Padding(
+        child: Text("Tipo: ${prod.Tipo_Producto}"),
+        padding: EdgeInsets.all(15),
+      ),
+      Padding(
+        child: Text("Estado: ${prod.Estado_Producto}"),
+        padding: EdgeInsets.all(15),
+      )
+    ];
+
+    Container administrar = Container(
+      height: screenSize.height,
+      width: screenSize.width,
+      decoration: BoxDecoration(
+      gradient: new LinearGradient(
+        colors: <Color>[
+          const Color.fromRGBO(162, 146, 199, 0.8),
+          const Color.fromRGBO(51, 51, 63, 0.9),
+        ],
+        stops: [0.2, 1.0],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(0.0, 1.0),
+      )),  
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: fields            
+          )
+        ],
+      ),
+    );
+
+
+
+    List<Widget> _pages = <Widget>[
+      administrar,
+    ];
+
+    return (new WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        body:Center(
+          child: PageView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },       
+          ),
+        ),
+      ),
+    ));
+  }
+  
+}
+
+import 'package:afriticapp/API_Access/ProductosControlador.dart';
+import 'package:flutter/material.dart';
+import 'package:afriticapp/API_Access/Controlador.dart';
+
+
+class RowProductoBuilder
+{
+  List<Product> listaPedidos = new List<Product>();
+  Controlador c;
+
+  Future<void> cargarDatos() async
+  {
+    c = new Controlador();
+    await c.Inventario();
+    listaPedidos = c.ProductosC.Inventario;
+  }
+
+  RowProductoBuilder()
+  {
+    
+  }
+}
+
+//Data transfer object para producto
+class ProductoContainer 
+{
+  static final ProductoContainer instance = new ProductoContainer._internal();
+
+  Product producto;
+
+  ProductoContainer._internal(){
+
+  }
+
+  factory ProductoContainer()
+  {
+    return instance;
+  }
+}
+
+import 'package:flutter/material.dart';
+import 'package:afriticapp/Screens/Productos/data.dart';
+import 'package:afriticapp/Components/PrototipoListaProductos.dart';
+import 'package:draggable_floating_button/draggable_floating_button.dart';
+
+class Productos extends StatefulWidget{
+  const Productos ({Key key}) :super(key:key);
+
+  @override
+  ProductosState createState() => new ProductosState();
+  
+}
+
+
+
+class ProductosState extends State<Productos> {
+
+  RowProductoBuilder productos = new RowProductoBuilder();
+
+  List construirLista()
+  {
+    return productos.listaPedidos.map(
+      (producto) => (PrototipoListaProductos(
+        product: producto,
+        )
+      )
+    ).toList();
+  }
+
+
+
+  Widget build(BuildContext context)
+  {
+    Size screenSize = MediaQuery.of(context).size;
+    AppBar appBar = new AppBar(
+      title: Text("Productos"),
+      backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () {
+
+          },
+          icon: new Icon(Icons.search),
+          alignment: AlignmentDirectional.centerEnd,
+        ),
+        IconButton(
+          onPressed: (){
+
+          },
+          icon: Icon(Icons.menu),
+        )
+      ],
+    );
+
+    AnimatedContainer productosconteiner = AnimatedContainer(
+      duration: Duration(seconds: 10),
+      height: screenSize.height,
+      width: screenSize.width,
+      decoration: BoxDecoration(
+      gradient: new LinearGradient(
+        colors: <Color>[
+          const Color.fromRGBO(162, 146, 199, 0.8),
+          const Color.fromRGBO(51, 51, 63, 0.9),
+        ],
+        stops: [0.2, 1.0],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(0.0, 1.0),
+      )),  
+      child: Stack(
+        children: <Widget>[
+            FutureBuilder(
+              future: productos.cargarDatos(),
+              builder: (_,op) {
+                if(op.connectionState == ConnectionState.done)
+                {
+                  var _items = construirLista();
+                  var lista = ListView.builder(
+                    padding: EdgeInsets.all(5),
+                    itemCount: _items.length,
+                    itemBuilder: (BuildContext context,int index){
+                      return _items[index%_items.length];
+                    });
+                  return RefreshIndicator(
+                    child: lista,
+                    onRefresh: (){
+                      setState(() {
+                        
+                      });
+                    },
+                  );
+                }
+                else
+                {
+                  return CircularProgressIndicator();
+                }
+              },
+            )
+        ] 
+
+      ),
+    );
+    
+
+    List<Widget> _pages = <Widget>[
+      productosconteiner,
+    ];
+
+    return (new WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: appBar,
+        body:Center(
+          child: PageView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+                return _pages[index % _pages.length];
+                },       
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
+          onPressed: ()
+          {
+            Navigator.pushNamed(context, "/add_prod");
+          },
+          child: Icon(
+          Icons.add,
+          ),
+        )
+      ),
+    ));
+
+  }
+  
+}
+
+import 'package:afriticapp/Routes.dart';
+
+void main() {
+  new Routes();
+}
+
+
+import 'package:afriticapp/Screens/Pedido_detalle/index.dart';
+import 'package:flutter/material.dart';
+
+import 'package:afriticapp/Screens/Login/index.dart';
+import 'package:afriticapp/Screens/Home/index.dart';
+import 'package:afriticapp/Screens/Productos/index.dart';
+import 'package:afriticapp/Screens/Pedidos/index.dart';
+import 'package:afriticapp/Screens/Changepass/index.dart';
+import 'package:afriticapp/Screens/Administrar/index.dart';
+import 'package:afriticapp/Screens/Estadisticas/index.dart';
+import 'package:afriticapp/Screens/Producto_detalle/index.dart';
+import 'package:afriticapp/Screens/AgregarProducto/index.dart';
+import 'package:afriticapp/Screens/AgregarPedido/index.dart';
+
+class Routes {
+  Routes() {
+    runApp(new MaterialApp(
+      title: "AfriticApp",
+      debugShowCheckedModeBanner: false,
+      home: new LoginScreen(),
+      onGenerateRoute: (RouteSettings settings) {
+        switch (settings.name) {
+          case '/login':
+            return new MyCustomRoute(
+              builder: (_) => new LoginScreen(),
+              settings: settings,
+            );
+          case '/home':
+            return new MyCustomRoute(
+              builder: (_) => new HomeScreen(),
+              settings: settings,
+            );
+          case '/productos':
+            return new MyCustomRoute(
+              builder: (_) => new Productos(),
+              settings: settings,
+            );
+          case '/pedidos':
+            return new MyCustomRoute(
+              builder: (_) => new Pedidos(),
+              settings: settings,
+            );
+          case '/changepass':
+            return new MyCustomRoute(
+              builder: (_) => new Changepass(),
+              settings: settings,
+            );
+          case '/estadisticas':
+            return new MyCustomRoute(
+              builder: (_) => new Estadisticas(),
+              settings: settings,
+            );
+          case '/administrar':
+            return new MyCustomRoute(
+              builder: (_) => new Administrar(),
+              settings: settings,
+            );
+          case '/desc_prod':
+            return new MyCustomRoute(
+              builder: (_) => new DetalleProducto(),
+              settings: settings,
+            );
+          case '/add_prod':
+            return new MyCustomRoute(
+              builder: (_) => new AddProducto(),
+              settings: settings,
+            );
+            case '/add_ped':
+            return new MyCustomRoute(
+              builder: (_) => new AddOrder(),
+              settings: settings,
+            );
+            case '/desc_ped':
+            return new MyCustomRoute(
+              builder: (_) => new DetallePedido(),
+              settings: settings,
+            );
+
+        }
+      },
+    ));
+  }
+}
+
+class MyCustomRoute<T> extends MaterialPageRoute<T> {
+  MyCustomRoute({WidgetBuilder builder, RouteSettings settings})
+      : super(builder: builder, settings: settings);
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    if (settings.isInitialRoute) return child;
+    return new FadeTransition(opacity: animation, child: child);
+      }
+}
+
+
