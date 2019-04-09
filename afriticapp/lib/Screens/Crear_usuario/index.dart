@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../Components/GenericButton.dart';
+import '../../Components/InputFields.dart';
 
 
-class Administrar extends StatefulWidget
+class Newuser extends StatefulWidget
 {
-  const Administrar ({Key key}):super(key:key);
+  const Newuser ({Key key}):super(key:key);
 
   @override
-  AdministrarState createState() => new AdministrarState();
+  NewuserState createState() => new NewuserState();
 }
 
-class AdministrarState extends State<Administrar> {
+class NewuserState extends State<Newuser> {
 
   
 
@@ -18,45 +19,51 @@ class AdministrarState extends State<Administrar> {
   {
     Size screenSize = MediaQuery.of(context).size;
 
-        GestureDetector bcrearuser = new GestureDetector(
+      GestureDetector bnewuser = new GestureDetector(
             child: 
             GenericButton(
-              title: "Cuenta nueva",
+              title: "Guardar",
             ),
             onTap: (){
-              Navigator.pushNamed(context, "/new_user");
-            },
-          );
-        GestureDetector badministrarusuarios = new GestureDetector(
-            child: 
-            GenericButton(
-              title: "Administrar usuarios",
-            ),
-            onTap: (){
-              Navigator.pushNamed(context, "/admin_usuarios");
-            },
-          );
-        GestureDetector badministrarproductos = new GestureDetector(
-            child: 
-            GenericButton(
-              title: "Administrar productos",
-            ),
-            onTap: (){
-              Navigator.pushNamed(context, "/admin_pedidos");
+              //Navigator.pushNamed(context, "/pedidos");
             },
           );
 
+          InputFieldArea nombre = 
+            InputFieldArea(
+              hint: "Nombre",
+              obscure: false,
+            );
+
+          InputFieldArea apellido = 
+            InputFieldArea(
+              hint: "Apellido",
+              obscure: false,
+            );
+
+            InputFieldArea email = 
+              InputFieldArea(
+                hint: "Correo",
+                obscure: false,
+            );
 
 
+          InputFieldArea pass = 
+            InputFieldArea(
+              hint: "Contraseña",
+              obscure: true,
+            );
+
+        
     AppBar appBar = new AppBar(
-      title: Text("Adminsitrar"),
+      title: Text("Nuevo usuario"),
       backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
       actions: <Widget>[
         
       ],
     );
 
-    AnimatedContainer administrar = AnimatedContainer(
+    AnimatedContainer nuevo_usuario = AnimatedContainer(
       duration: Duration(seconds: 10),
       height: screenSize.height,
       width: screenSize.width,
@@ -78,19 +85,26 @@ class AdministrarState extends State<Administrar> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Padding(
-                child:bcrearuser ,
+                child: nombre,
                 padding: EdgeInsets.all(15),
               ),
               Padding(
-                child:badministrarproductos ,
+                child: apellido,
                 padding: EdgeInsets.all(15),
               ),
               Padding(
-                child:badministrarusuarios ,
+                child: email,
                 padding: EdgeInsets.all(15),
               ),
-
-            ],            
+              Padding(
+                child: pass,
+                padding: EdgeInsets.all(15),
+              ),
+              Padding(
+                child: bnewuser,
+                padding: EdgeInsets.all(15),
+              ),
+                          ],            
           )
         ],
       ),
@@ -99,7 +113,7 @@ class AdministrarState extends State<Administrar> {
 
 
     List<Widget> _pages = <Widget>[
-      administrar,
+       nuevo_usuario,
     ];
 
     return (new WillPopScope(
@@ -108,6 +122,7 @@ class AdministrarState extends State<Administrar> {
       },
       child: Scaffold(
         appBar: appBar,
+        resizeToAvoidBottomPadding: false,
         body:Center(
           child: PageView.builder(
             itemCount: 1,

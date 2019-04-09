@@ -11,6 +11,9 @@ import 'package:afriticapp/Screens/Estadisticas/index.dart';
 import 'package:afriticapp/Screens/Producto_detalle/index.dart';
 import 'package:afriticapp/Screens/AgregarProducto/index.dart';
 import 'package:afriticapp/Screens/AgregarPedido/index.dart';
+import 'package:afriticapp/Screens/Admin_productos/index.dart';
+import 'package:afriticapp/Screens/Admin_usuarios/index.dart';
+import 'package:afriticapp/Screens/Crear_usuario/index.dart';
 
 class Routes {
   Routes() {
@@ -75,7 +78,21 @@ class Routes {
               builder: (_) => new DetallePedido(),
               settings: settings,
             );
-
+            case '/admin_pedidos':
+            return new MyCustomRoute(
+              builder: (_) => new Adminproductos(),
+              settings: settings,
+            );
+            case '/admin_usuarios':
+            return new MyCustomRoute(
+              builder: (_) => new Adminusers(),
+              settings: settings,
+            );
+            case '/new_user':
+            return new MyCustomRoute(
+              builder: (_) => new Newuser(),
+              settings: settings,
+            );
         }
       },
     ));

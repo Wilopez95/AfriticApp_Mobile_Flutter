@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import '../../Components/GenericButton.dart';
 
 
-class Administrar extends StatefulWidget
+class Adminusers extends StatefulWidget
 {
-  const Administrar ({Key key}):super(key:key);
+  const Adminusers ({Key key}):super(key:key);
 
   @override
-  AdministrarState createState() => new AdministrarState();
+  AdminusersState createState() => new AdminusersState();
 }
 
-class AdministrarState extends State<Administrar> {
+class AdminusersState extends State<Adminusers> {
 
   
 
@@ -18,38 +18,11 @@ class AdministrarState extends State<Administrar> {
   {
     Size screenSize = MediaQuery.of(context).size;
 
-        GestureDetector bcrearuser = new GestureDetector(
-            child: 
-            GenericButton(
-              title: "Cuenta nueva",
-            ),
-            onTap: (){
-              Navigator.pushNamed(context, "/new_user");
-            },
-          );
-        GestureDetector badministrarusuarios = new GestureDetector(
-            child: 
-            GenericButton(
-              title: "Administrar usuarios",
-            ),
-            onTap: (){
-              Navigator.pushNamed(context, "/admin_usuarios");
-            },
-          );
-        GestureDetector badministrarproductos = new GestureDetector(
-            child: 
-            GenericButton(
-              title: "Administrar productos",
-            ),
-            onTap: (){
-              Navigator.pushNamed(context, "/admin_pedidos");
-            },
-          );
-
+      
 
 
     AppBar appBar = new AppBar(
-      title: Text("Adminsitrar"),
+      title: Text("Adminsitrar Usuarios"),
       backgroundColor: Color.fromRGBO(247, 64, 106, 1.0),
       actions: <Widget>[
         
@@ -76,21 +49,7 @@ class AdministrarState extends State<Administrar> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                child:bcrearuser ,
-                padding: EdgeInsets.all(15),
-              ),
-              Padding(
-                child:badministrarproductos ,
-                padding: EdgeInsets.all(15),
-              ),
-              Padding(
-                child:badministrarusuarios ,
-                padding: EdgeInsets.all(15),
-              ),
-
-            ],            
+            children: <Widget>[],            
           )
         ],
       ),
