@@ -1,3 +1,5 @@
+import 'package:afriticapp/Components/PrototipoListaProductos.dart';
+import 'package:afriticapp/Screens/Productos/data.dart';
 import 'package:flutter/material.dart';
 import '../../Components/GenericButton.dart';
 
@@ -12,7 +14,17 @@ class Adminproductos extends StatefulWidget
 
 class AdminproductosState extends State<Adminproductos> {
 
-  
+  RowProductoBuilder productos = new RowProductoBuilder();
+
+  List construirLista()
+  {
+    return productos.listaPedidos.map(
+      (producto) => (PrototipoListaProductos(
+        product: producto,
+        )
+      )
+    ).toList();
+  }
 
   Widget build(BuildContext context)
   {
@@ -41,17 +53,34 @@ class AdminproductosState extends State<Adminproductos> {
         begin: const FractionalOffset(0.0, 0.0),
         end: const FractionalOffset(0.0, 1.0),
       )),  
-      child: Stack(
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-                          ],            
-          )
-        ],
-      ),
+      child: FutureBuilder(
+              future: productos.cargarDatos(),
+              builder: (_,op) {
+                if(op.connectionState == ConnectionState.done)
+                {
+                  var _items = construirLista();
+                  var lista = ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.all(5),
+                    itemCount: _items.length,
+                    itemBuilder: (BuildContext context,int index){
+                      return _items[index%_items.length];
+                    });
+                  return RefreshIndicator(
+                    child: lista,
+                    onRefresh: (){
+                      setState(() {
+                        
+                      });
+                    },
+                  );
+                }
+                else
+                {
+                  return CircularProgressIndicator();
+                }
+              },
+            )
     );
 
 

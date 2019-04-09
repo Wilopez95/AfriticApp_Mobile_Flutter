@@ -1,5 +1,5 @@
+import 'package:afriticapp/API_Access/Controlador.dart';
 import 'package:flutter/material.dart';
-import 'package:afriticapp/Screens/Pedidos/data.dart';
 import '../../Components/GenericButton.dart';
 import '../../Components/InputFields.dart';
 
@@ -14,7 +14,9 @@ class Changepass extends StatefulWidget
 
 class ChangepassState extends State<Changepass> {
 
-  
+  final actualController = new TextEditingController();
+  final newController = new TextEditingController();
+  final new2Controller = new TextEditingController();
 
   Widget build(BuildContext context)
   {
@@ -26,7 +28,18 @@ class ChangepassState extends State<Changepass> {
               title: "Cambiar Contraseña",
             ),
             onTap: (){
-              //Navigator.pushNamed(context, "/pedidos");
+              var c = Controlador();
+              if(newController.text == new2Controller.text)
+              {
+
+              }
+              var map = {
+                "Correo": c.UsuariosC.Logueado.Correo,
+                "Contraseña": actualController.text,
+                "Nueva_Contraseña":new2Controller.text
+              };
+              c.Escribir(3, map);
+              Navigator.pop(context);
             },
           );
 
@@ -36,6 +49,7 @@ class ChangepassState extends State<Changepass> {
             InputFieldArea(
               hint: "Contraseña actual",
               obscure: true,
+              controller: actualController,
             );
     
 
@@ -43,11 +57,13 @@ class ChangepassState extends State<Changepass> {
             InputFieldArea(
               hint: "Nueva contraseña",
               obscure: true,
+              controller: newController,
           );
           InputFieldArea confirmpass =  
             InputFieldArea(
               hint: "Confirme nueva contraseña",
               obscure: true,
+              controller: new2Controller,
             );
 
 

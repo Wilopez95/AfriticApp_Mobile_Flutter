@@ -1,3 +1,4 @@
+import 'package:afriticapp/API_Access/Controlador.dart';
 import 'package:afriticapp/API_Access/ProductosControlador.dart';
 import 'package:flutter/material.dart';
 import '../Screens/Productos/data.dart';
@@ -63,7 +64,14 @@ class PrototipoListaProductos extends StatelessWidget {
           ),
           new IconButton(
             icon: Icon(Icons.delete),
-            onPressed: null,
+            onPressed: (){
+              var c = Controlador();
+              var t =c.UsuariosC.Logueado.Tipo_Cuenta;
+              if(t == "A")
+              {
+                c.APIparametros(5, product.ProductID);
+              }
+            },
           ),
         ],
       )

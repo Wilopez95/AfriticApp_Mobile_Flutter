@@ -1,3 +1,4 @@
+import 'package:afriticapp/API_Access/Controlador.dart';
 import 'package:flutter/material.dart';
 import '../../Components/GenericButton.dart';
 import '../../Components/InputFields.dart';
@@ -13,6 +14,10 @@ class Newuser extends StatefulWidget
 
 class NewuserState extends State<Newuser> {
 
+  final nombreController = new TextEditingController();
+  final apellidoController = new TextEditingController();
+  final correoController = new TextEditingController();
+  final passController = new TextEditingController();
   
 
   Widget build(BuildContext context)
@@ -25,7 +30,16 @@ class NewuserState extends State<Newuser> {
               title: "Guardar",
             ),
             onTap: (){
-              //Navigator.pushNamed(context, "/pedidos");
+              var c = Controlador();
+              var map = {
+                "Nombre":nombreController.text,
+                "Apellido":apellidoController.text,
+                "Correo":correoController.text,
+                "Contraseña":passController.text
+              };
+
+              c.Escribir(0, map);
+              Navigator.pop(context);
             },
           );
 
@@ -33,18 +47,21 @@ class NewuserState extends State<Newuser> {
             InputFieldArea(
               hint: "Nombre",
               obscure: false,
+              controller: nombreController,
             );
 
           InputFieldArea apellido = 
             InputFieldArea(
               hint: "Apellido",
               obscure: false,
+              controller: apellidoController,
             );
 
             InputFieldArea email = 
               InputFieldArea(
                 hint: "Correo",
                 obscure: false,
+                controller: correoController,
             );
 
 
@@ -52,6 +69,7 @@ class NewuserState extends State<Newuser> {
             InputFieldArea(
               hint: "Contraseña",
               obscure: true,
+              controller: passController,
             );
 
         
