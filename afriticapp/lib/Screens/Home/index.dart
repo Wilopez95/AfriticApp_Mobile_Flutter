@@ -235,10 +235,10 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 child:bCambiarContrasena ,
                 padding: EdgeInsets.all(15),
               ),
-              Padding(
+              /*Padding(
                 child: bEstadisticas,
                 padding: EdgeInsets.all(15),
-              ),
+              ),*/
               Padding(
                 child: bAdmisnitrar,
                 padding: EdgeInsets.all(15),
