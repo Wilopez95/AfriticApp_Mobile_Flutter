@@ -50,12 +50,14 @@ class Controlador{
     });
   }
 
-  Login(usuario, pass) {
+  Future<int> Login(usuario, pass) async {
     var map = {"Correo": usuario,"Contraseña": pass};
     this.Acceso.postToApi("https://afriticapp.herokuapp.com/Login/", map).then(
       (dynamic jsonResponse){
-      this.UsuariosC.Login(jsonResponse);
-    });
+        this.UsuariosC.Login(jsonResponse);
+      }
+    );
+    return this.UsuariosC.estadoLogin;
   }
 
   Escribir(int link, var map){

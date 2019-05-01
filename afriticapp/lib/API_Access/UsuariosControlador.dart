@@ -36,8 +36,6 @@ class UsuariosControlador{
   int estadoLogin = -3;
 
   Login(jsonResponse){
-    print("Respuesta");
-    print(jsonResponse);
     if(jsonResponse is int)
     {
       estadoLogin = -1;

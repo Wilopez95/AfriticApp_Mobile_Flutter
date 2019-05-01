@@ -22,12 +22,16 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen>
-    with TickerProviderStateMixin {
+  with TickerProviderStateMixin {
+  
   AnimationController _loginButtonController;
   var animationStatus = 0;
-  List <User> listaUsuarios;
+  bool lockScreen = false;
   var correoController = TextEditingController();
   var passController = TextEditingController();
+  //Se agrega al scaffold para notificaciones 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  int estado;
 
 
   
@@ -44,6 +48,7 @@ class LoginScreenState extends State<LoginScreen>
     _loginButtonController.dispose();
     correoController.dispose();
     passController.dispose();
+    estado = -1;
     super.dispose();
   }
   
@@ -107,14 +112,7 @@ class LoginScreenState extends State<LoginScreen>
         });
   }
 
-  int estado = -3;
-
-  Future<int> logIn(correo,pass) async
-  {
-    var c = new Controlador();
-    await c.Login(correo, pass);
-    return c.UsuariosC.estadoLogin;    
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -123,26 +121,7 @@ class LoginScreenState extends State<LoginScreen>
     SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
-      ]);    
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_){
-        if(estado == 0)
-        {
-          _playAnimation();
-        }
-      }
-    );
-
-    InkWell boton1 = new InkWell
-    (
-      onTap: () {
-        var c = Controlador();
-        setState(() {
-          estado = c.UsuariosC.estadoLogin;
-        });
-      },
-      child: new SignIn());
+      ]);
 
     StaggerAnimation butAnim = new StaggerAnimation
     (
@@ -153,9 +132,49 @@ class LoginScreenState extends State<LoginScreen>
           pass: passController.text,
     );
 
+
+    InkWell boton1 = new InkWell
+    (
+      onTap: () {
+      //bloquea la pantalla
+      setState(() {
+          lockScreen = true;
+        });
+      //verifica la informacion
+      var c = Controlador();
+      c.Login(correoController.text, passController.text).then(
+        (response){
+          setState(() {
+          estado = response;
+          lockScreen = false;
+          if(estado < 0)
+          {
+            //Mostrar una notificacion
+            _scaffoldKey.currentState.showSnackBar(
+              SnackBar(
+                content: Text("Usuario o contraseña incorrecto"),
+                duration: Duration(seconds: 3),
+              )
+            );
+          }
+          else
+          {
+            _playAnimation();
+          }
+        }); 
+        }
+      );
+      },
+      child: new SignIn()
+    );
+
+    
+
     return (new WillPopScope(
         onWillPop: _onWillPop,
         child: new Scaffold(
+          //agregar al scaffold para notificaciones
+          key: _scaffoldKey,
           body: new Container(
               child: new Container(
                   decoration: new BoxDecoration(
@@ -191,33 +210,14 @@ class LoginScreenState extends State<LoginScreen>
                                 funcion: _forgotPass,
                               )
                             ],
-                          ), 
-                          FutureBuilder(
-                            future: logIn(correoController.text, passController.text),
-                            builder: (_,op)
-                            {
-                              if(op.connectionState == ConnectionState.done)
-                              {
-                                if(op.data < 0)
-                                {
-                                  return new Padding(
-                                  padding: const EdgeInsets.only(bottom: 30.0),
-                                  child: boton1                                      
-                                  );
-                                }
-                                else
-                                {
-                                  return butAnim;
-                                }
-                              }
-                              else
-                              {
-                                return new Padding(
-                                  padding: const EdgeInsets.only(bottom: 30.0),
-                                  child: boton1                                      
-                                  );
-                              }
-                            },
+                          ),
+                          lockScreen ?
+                          Container(
+                            child: CircularProgressIndicator(
+                            ),
+                          )  
+                          : Container(
+                            child: estado >= 0 ? butAnim : boton1,
                           )
                         ],
                       ),
